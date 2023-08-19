@@ -1,5 +1,11 @@
 # yam
 
+Yam is a simple mapping tool. Its purpose is to scan a network, file system or other sources and report findings of all kinds.
+
+## Note: 
+Yam is a tool purely intended for personal use! 
+Do not use it to scan devices you do not have permission for!
+
 ## Table of content
 
 - [Installation](#Installation)
