@@ -19,13 +19,16 @@ enum yam_error {
   YAM_ERRNO
 };
 
-#define yam_errno()                                                           \
-  { yam_err_set(YAM_ERRNO); }
-
-#define yam_err_fset(err, ...)                                                \
+#define yam_errno()                                                            \
   {                                                                            \
-    yam_err_set((err));                                                       \
-    yam_error(__VA_ARGS__);                                                   \
+    yam_error("%s\n", strerror(errno));                                        \
+    yam_err_set(YAM_ERRNO);                                                    \
+  }
+
+#define yam_err_fset(err, ...)                                                 \
+  {                                                                            \
+    yam_err_set((err));                                                        \
+    yam_error(__VA_ARGS__);                                                    \
   }
 
 // sets err to a value
