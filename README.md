@@ -1,10 +1,7 @@
 # yam
 
-Yam is a simple mapping tool. Its purpose is to scan a network, file system or other sources and report findings of all kinds.
-
-## Note: 
-Yam is a tool purely intended for personal use! 
-Do not use it to scan devices you do not have permission for!
+Yam is a lightweight payload crafting tool. It mapes raw binary data into a usable format.
+It takes files, raw string and other things as input and converts it to a target payload (e.g. a C char array)
 
 ## Table of content
 
@@ -33,3 +30,9 @@ This program is distributed under the terms of the MIT License.
 
 ## Contributing
 
+## TODO
+
+- Implement data sources and outputs
+- Allow use of partial files (e.g. from offset to offset)
+- Sources: File, Hex string input, regular string, padding,
+- Outputs: raw binary, C char-array, python array
