@@ -1,4 +1,4 @@
-#include "libyam/sources.h"
+#include "libyam/source.h"
 #include "libyam/macros.h"
 #include "libyam/error.h"
 #include "libyam/log.h"
