@@ -23,6 +23,8 @@ struct yam_source {
 };
 
 struct yam_source yam_source_init(enum yam_sources type, int from, int read);
+struct yam_source yam_source_from(const char *expr);
+struct yam_source yam_source_file(const char *path, int from, int read);
 
 // read from a source into buffer
 // returns amount of bytes written or 0 if no more writes need to be done

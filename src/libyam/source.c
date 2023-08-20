@@ -15,6 +15,19 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
   return self;
 }
 
+struct yam_source yam_source_from(const char *expr) {
+  /*  TODO:
+      Implement input source syntax that allows like this:
+      No specific syntax -> file path
+      hex:01 02 02 -> hex string
+      file:/path/to/file -> file path
+      str:Hello world -> regular string
+      pad:0:100 -> pad with 100 * '0'
+  */
+
+  return yam_source_file(expr, 0, YAM_READ_TO_END);
+}
+
 struct yam_source yam_source_file(const char *path, int from, int read) {
   struct yam_source self = yam_source_init(YAM_FILE, from, read);
 

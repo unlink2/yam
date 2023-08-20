@@ -1,11 +1,18 @@
 #include "arg.h"
 #include "libyam/config.h"
 #include "libyam/log.h"
+#include <argtable2.h>
+
+#define YAM_MAX_SOURCE 1028
 
 struct yam_config yam_args_to_config(int argc, char **argv) {
   struct arg_lit *verb = NULL;
   struct arg_lit *help = NULL;
   struct arg_lit *version = NULL;
+
+  struct arg_str *sources = NULL;
+  struct arg_str *sink = NULL;
+  struct arg_str *drain = NULL;
 
   // arg end stores errors
   struct arg_end *end = NULL;
@@ -15,12 +22,21 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
       version =
           arg_litn(NULL, "version", 0, 1, "display version info and exit"),
       verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output"),
+      sources =
+          arg_strn(NULL, NULL, "INPUT", 1, YAM_MAX_SOURCE, "An input source"),
+      sink = arg_str0("s", "sink", "c-char-array",
+                      "Select which converter to use"),
+      drain = arg_str0("o", "output", "FILE", "Select an output file"),
       end = arg_end(20),
   };
 
+  struct yam_config cfg = yam_config_init();
+
   // output params
   char progname[] = "yam";
-  char short_desc[] = "";
+  char short_desc[] =
+      "Yam - A simple mapper of binary inputs to another representation for "
+      "quickly getting data into a usable format. ";
 
   // version info
   int version_major = 0;
@@ -45,7 +61,7 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   }
 
   if (verb->count > 0) {
-    yam_log_init(verb->count);
+    cfg.verbose = verb->count;
   } else {
     yam_log_init(YAM_LOG_LEVEL_ERROR);
   }
@@ -56,8 +72,6 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
     exitcode = 1;
     goto exit;
   }
-
-  struct yam_config cfg = yam_config_init();
 
   // map args to cfg data here
 
