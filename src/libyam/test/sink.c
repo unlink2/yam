@@ -26,7 +26,8 @@ void test_c_char_array_sink(void **state) {
     rewind(f);
     fread(result, result_len, 1, f);
 
-    assert_string_equal("const char test_array[] = { 61, 62, 63, };", result);
+    assert_string_equal("const char test_array[] = { 0x61, 0x62, 0x63, };",
+                        result);
     assert_false(yam_err());
 
     yam_sink_free(&sink);

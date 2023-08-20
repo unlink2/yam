@@ -36,7 +36,7 @@ size_t yam_sink_convert_c_char_array(struct yam_sink *self,
                                      size_t data_len) {
   size_t written = 0;
   for (size_t i = 0; i < data_len; i += self->stride) {
-    written += yam_drain_fprintf(drain, "%0x, ", data[i]);
+    written += yam_drain_fprintf(drain, "0x%0x, ", data[i]);
   }
 
   return written;
