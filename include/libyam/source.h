@@ -5,6 +5,8 @@
 
 #define YAM_READ_TO_END (-1)
 
+struct yam_config;
+
 enum yam_sources { YAM_FILE, YAM_STRING, YAM_HEX_STRING, YAM_PADDING };
 
 struct yam_source {
@@ -23,7 +25,7 @@ struct yam_source {
 };
 
 struct yam_source yam_source_init(enum yam_sources type, int from, int read);
-struct yam_source yam_source_from(const char *expr);
+struct yam_source yam_source_from(struct yam_config *cfg, const char *expr);
 struct yam_source yam_source_file(FILE *f, int from, int read);
 
 // read from a source into buffer

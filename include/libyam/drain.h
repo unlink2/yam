@@ -2,6 +2,9 @@
 #define DRAIN_H_
 
 #include <stdio.h>
+
+struct yam_config;
+
 enum yam_drains { YAM_DRAIN_FILE };
 
 struct yam_drain {
@@ -11,7 +14,7 @@ struct yam_drain {
   };
 };
 
-struct yam_drain yam_drain_from(const char *expr);
+struct yam_drain yam_drain_from(struct yam_config *cfg, const char *expr);
 struct yam_drain yam_drain_init(enum yam_drains type);
 struct yam_drain yam_drain_file(FILE *f);
 

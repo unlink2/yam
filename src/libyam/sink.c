@@ -4,7 +4,7 @@
 #include "libyam/error.h"
 #include <string.h>
 
-struct yam_sink yam_sink_from(const char *expr) {
+struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   struct yam_sink sink;
   memset(&sink, 0, sizeof(sink));
 

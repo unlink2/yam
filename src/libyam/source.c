@@ -16,7 +16,7 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
   return self;
 }
 
-struct yam_source yam_source_from(const char *expr) {
+struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   /*  TODO:
       Implement input source syntax that allows like this:
       No specific syntax -> file path
@@ -26,19 +26,22 @@ struct yam_source yam_source_from(const char *expr) {
       pad:0:100 -> pad with 100 * '0'
   */
 
+  printf("%s\n", expr);
   return yam_source_file(yam_fopen(expr, "re", stdin), 0, YAM_READ_TO_END);
 }
 
 struct yam_source yam_source_file(FILE *f, int from, int read) {
   struct yam_source self = yam_source_init(YAM_FILE, from, read);
 
+  self.f = f;
   if (!self.f) {
-    yam_errno();
     return self;
   }
 
-  if (fseek(self.f, self.from, SEEK_SET) == -1) {
-    yam_errno();
+  if (self.from) {
+    if (fseek(self.f, self.from, SEEK_SET) == -1) {
+      yam_errno();
+    }
   }
 
   return self;

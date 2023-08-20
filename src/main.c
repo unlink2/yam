@@ -7,6 +7,6 @@
 
 int main(int argc, char **argv) {
   struct yam_config cfg = yam_args_to_config(argc, argv);
-  return 0;
+
   return yam_main(&cfg);
 }

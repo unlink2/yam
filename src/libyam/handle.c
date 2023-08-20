@@ -1,4 +1,5 @@
 #include "libyam/handle.h"
+#include "libyam/drain.h"
 #include "libyam/error.h"
 #include "libyam/sink.h"
 #include <string.h>
@@ -36,6 +37,7 @@ void yam_handle_run(struct yam_handle *self) {
   }
 
   yam_sink_end(&self->sink, &self->drain);
+  yam_drain_fprintf(&self->drain, "\n");
   if (yam_err()) {
     return;
   }
