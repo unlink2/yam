@@ -1,4 +1,5 @@
 #include "libyam/source.h"
+#include "libyam/config.h"
 #include "libyam/macros.h"
 #include "libyam/error.h"
 #include "libyam/log.h"
@@ -25,13 +26,12 @@ struct yam_source yam_source_from(const char *expr) {
       pad:0:100 -> pad with 100 * '0'
   */
 
-  return yam_source_file(expr, 0, YAM_READ_TO_END);
+  return yam_source_file(yam_fopen(expr, "re", stdin), 0, YAM_READ_TO_END);
 }
 
-struct yam_source yam_source_file(const char *path, int from, int read) {
+struct yam_source yam_source_file(FILE *f, int from, int read) {
   struct yam_source self = yam_source_init(YAM_FILE, from, read);
 
-  self.f = fopen(path, "re");
   if (!self.f) {
     yam_errno();
     return self;

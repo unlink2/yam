@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 // TODO: make this system way more dynamic
+#define YAM_SINK_C_CHAR_ARRAY_STR "c-char-array"
 
 enum yam_sinks { YAM_SINK_C_CHAR_ARRAY };
 
@@ -17,6 +18,7 @@ struct yam_sink {
   };
 };
 
+struct yam_sink yam_sink_from(const char *expr);
 struct yam_sink yam_sink_init(enum yam_sinks type, size_t stride);
 
 struct yam_sink yam_sink_c_char_array(size_t stride, const char *var_name);

@@ -8,13 +8,13 @@
 struct yam_handle {
   struct yam_source *sources;
   size_t sources_len;
-  struct yam_sink *sink;
-  struct yam_drain *drain;
+  struct yam_sink sink;
+  struct yam_drain drain;
 };
 
 struct yam_handle yam_handle_init(struct yam_source *sources,
-                                  size_t sources_len, struct yam_sink *sink,
-                                  struct yam_drain *drain);
+                                  size_t sources_len, struct yam_sink sink,
+                                  struct yam_drain drain);
 
 void yam_handle_run(struct yam_handle *self);
 

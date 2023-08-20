@@ -1,9 +1,14 @@
 #include "libyam/drain.h"
+#include "libyam/config.h"
 #include "libyam/error.h"
 #include "libyam/log.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+
+struct yam_drain yam_drain_from(const char *expr) {
+  return yam_drain_file(yam_fopen(expr, "we", stdout));
+}
 
 struct yam_drain yam_drain_init(enum yam_drains type) {
   struct yam_drain self;

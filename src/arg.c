@@ -1,6 +1,7 @@
 #include "arg.h"
 #include "libyam/config.h"
 #include "libyam/log.h"
+#include "libyam/sink.h"
 #include <argtable2.h>
 
 #define YAM_MAX_SOURCE 1028
@@ -22,11 +23,12 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
       version =
           arg_litn(NULL, "version", 0, 1, "display version info and exit"),
       verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output"),
-      sources =
-          arg_strn(NULL, NULL, "INPUT", 1, YAM_MAX_SOURCE, "An input source"),
-      sink = arg_str0("s", "sink", "c-char-array",
+      sink = arg_str0("s", "sink", YAM_SINK_C_CHAR_ARRAY_STR,
                       "Select which converter to use"),
       drain = arg_str0("o", "output", "FILE", "Select an output file"),
+
+      sources =
+          arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE, "An input source"),
       end = arg_end(20),
   };
 
@@ -36,7 +38,7 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   char progname[] = "yam";
   char short_desc[] =
       "Yam - A simple mapper of binary inputs to another representation for "
-      "quickly getting data into a usable format. ";
+      "quickly getting data into a usable format.";
 
   // version info
   int version_major = 0;
@@ -74,8 +76,10 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   }
 
   // map args to cfg data here
+  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 
   return cfg;
 exit:
-  exit(exitcode); // NOLINT
+  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+  exit(exitcode);
 }

@@ -15,6 +15,7 @@
 // Some may or may not require special error info
 enum yam_error {
   YAM_OK = 0,
+  YAM_ERR_INVAL_SINK,
   // errno is stored in err_detail
   YAM_ERRNO
 };

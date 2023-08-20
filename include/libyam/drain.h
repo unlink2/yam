@@ -11,6 +11,7 @@ struct yam_drain {
   };
 };
 
+struct yam_drain yam_drain_from(const char *expr);
 struct yam_drain yam_drain_init(enum yam_drains type);
 struct yam_drain yam_drain_file(FILE *f);
 
