@@ -26,7 +26,6 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
       pad:0:100 -> pad with 100 * '0'
   */
 
-  printf("%s\n", expr);
   return yam_source_file(yam_fopen(expr, "re", stdin), 0, YAM_READ_TO_END);
 }
 

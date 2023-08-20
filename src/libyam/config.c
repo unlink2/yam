@@ -18,17 +18,19 @@ int yam_main(struct yam_config *cfg) {
 }
 
 struct yam_config yam_config_init(void) {
-  struct yam_config c;
-  memset(&c, 0, sizeof(c));
+  struct yam_config self;
+  memset(&self, 0, sizeof(self));
 
-  c.verbose = YAM_LOG_LEVEL_ERROR;
-  c.drain_expr = YAM_STD_FILE;
-  c.sink_expr = YAM_SINK_C_CHAR_ARRAY_STR;
+  self.verbose = YAM_LOG_LEVEL_ERROR;
+  self.drain_expr = YAM_STD_FILE;
+  self.sink_expr = YAM_SINK_C_CHAR_ARRAY_STR;
 
-  c.source_exprs = default_sources;
-  c.source_exprs_len = default_sources_len;
+  self.source_exprs = default_sources;
+  self.source_exprs_len = default_sources_len;
 
-  return c;
+  self.var_name = "var";
+
+  return self;
 }
 
 FILE *yam_fopen(const char *path, const char *mode, FILE *stdfile) {

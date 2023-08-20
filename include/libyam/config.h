@@ -16,6 +16,9 @@ struct yam_config {
 
   const char *sink_expr;
   const char *drain_expr;
+
+  // sink specific
+  const char *var_name;
 };
 
 int yam_main(struct yam_config *cfg);

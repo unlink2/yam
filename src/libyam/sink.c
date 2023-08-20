@@ -2,16 +2,15 @@
 #include "libyam/drain.h"
 #include "libyam/log.h"
 #include "libyam/error.h"
+#include "libyam/config.h"
 #include <string.h>
 
 struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   struct yam_sink sink;
   memset(&sink, 0, sizeof(sink));
 
-  enum yam_sinks sink_type = YAM_SINK_C_CHAR_ARRAY;
   if (strcmp("", expr) == 0 || strcmp(YAM_SINK_C_CHAR_ARRAY_STR, expr) == 0) {
-    sink_type = YAM_SINK_C_CHAR_ARRAY;
-    sink = yam_sink_init(sink_type, 1);
+    sink = yam_sink_c_char_array(1, cfg->var_name);
   } else {
     yam_err_fset(YAM_ERR_INVAL_SINK, "Invalid sink type '%s'\n", expr);
   }
