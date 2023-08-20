@@ -25,7 +25,6 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
       str:Hello world -> regular string
       pad:0:100 -> pad with 100 * '0'
   */
-
   return yam_source_file(yam_fopen(expr, "re", stdin), 0, YAM_READ_TO_END);
 }
 
@@ -54,7 +53,7 @@ size_t yam_source_read_from_file(const struct yam_source *self, char *buffer,
 
   size_t read_amount = MIN(buffer_len, self->read - self->total_written);
 
-  size_t written = fread(buffer, read_amount, 1, self->f);
+  size_t written = fread(buffer, 1, read_amount, self->f);
 
   if (written == -1) {
     yam_errno();

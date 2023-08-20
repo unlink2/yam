@@ -39,6 +39,7 @@ FILE *yam_fopen(const char *path, const char *mode, FILE *stdfile) {
   }
   FILE *f = fopen(path, mode);
   if (!f) {
+    yam_error("%s: ", path);
     yam_errno();
   }
   return f;

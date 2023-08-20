@@ -15,6 +15,8 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   struct arg_str *sink = NULL;
   struct arg_str *drain = NULL;
 
+  struct arg_str *var_name = NULL;
+
   // arg end stores errors
   struct arg_end *end = NULL;
 
@@ -26,6 +28,8 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
       sink = arg_str0("s", "sink", YAM_SINK_C_CHAR_ARRAY_STR,
                       "Select which converter to use"),
       drain = arg_str0("o", "output", "FILE", "Select an output file"),
+      var_name = arg_str0(NULL, "varname", "NAME",
+                          "Select an name for the C variable"),
 
       sources =
           arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE, "An input source"),
@@ -76,6 +80,23 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   }
 
   // map args to cfg data here
+  if (sources->count) {
+    cfg.source_exprs = sources->sval;
+    cfg.source_exprs_len = sources->count;
+  }
+
+  if (sink->count) {
+    cfg.sink_expr = sink->sval[0];
+  }
+
+  if (drain->count) {
+    cfg.drain_expr = drain->sval[0];
+  }
+
+  if (var_name->count) {
+    cfg.var_name = var_name->sval[0];
+  }
+
   arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 
   return cfg;
