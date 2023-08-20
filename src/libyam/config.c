@@ -19,6 +19,20 @@ struct yam_config yam_config_init(void) {
   return c;
 }
 
+FILE *yam_fopen(const char *path, const char *mode, FILE *stdfile) {
+  if (strncmp(YAM_STD_FILE, path, 1) == 0) {
+    return stdfile;
+  }
+  return fopen(path, mode);
+}
+
+void yam_fclose(FILE *f) {
+  if (f == stdin || f == stdout || f == stderr) {
+    return;
+  }
+  fclose(f);
+}
+
 struct yam_handle yam_setup(struct yam_config *cfg) {}
 
 void yam_run(struct yam_handle *handle) {}
