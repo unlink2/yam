@@ -6,17 +6,13 @@
 #include <errno.h>
 #include <stdio.h>
 
-/**
- * Error is a error type struct that provides
- * an errno-style interface.
- */
-
 // Possible error types.
-// Some may or may not require special error info
 enum yam_error {
   YAM_OK = 0,
   YAM_ERR_INVAL_SINK,
-  // errno is stored in err_detail
+  YAM_ERR_INT_CONVERSION,
+  YAM_ERR_TOK_READ,
+  YAM_ERR_EXPR_SYNTAX,
   YAM_ERRNO
 };
 

@@ -6,35 +6,35 @@
 
 #define YAM_MAX_SOURCE 1028
 
+struct arg_lit *verb = NULL;
+struct arg_lit *help = NULL;
+struct arg_lit *version = NULL;
+
+struct arg_str *sources = NULL;
+struct arg_str *sink = NULL;
+struct arg_str *drain = NULL;
+
+struct arg_str *var_name = NULL;
+
+// arg end stores errors
+struct arg_end *end = NULL;
+
+#define yam_argtable                                                           \
+  { help, version, verb, sink, drain, var_name, sources, end, }
+
 struct yam_config yam_args_to_config(int argc, char **argv) {
-  struct arg_lit *verb = NULL;
-  struct arg_lit *help = NULL;
-  struct arg_lit *version = NULL;
+  help = arg_litn(NULL, "help", 0, 1, "display this help and exit");
+  version = arg_litn(NULL, "version", 0, 1, "display version info and exit");
+  verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output");
+  sink = arg_str0("s", "sink", YAM_SINK_C_CHAR_ARRAY_STR,
+                  "Select which converter to use");
+  drain = arg_str0("o", "output", "FILE", "Select an output file");
+  var_name =
+      arg_str0(NULL, "varname", "NAME", "Select an name for the C variable");
+  sources = arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE, "An input source");
+  end = arg_end(20);
 
-  struct arg_str *sources = NULL;
-  struct arg_str *sink = NULL;
-  struct arg_str *drain = NULL;
-
-  struct arg_str *var_name = NULL;
-
-  // arg end stores errors
-  struct arg_end *end = NULL;
-
-  void *argtable[] = {
-      help = arg_litn(NULL, "help", 0, 1, "display this help and exit"),
-      version =
-          arg_litn(NULL, "version", 0, 1, "display version info and exit"),
-      verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output"),
-      sink = arg_str0("s", "sink", YAM_SINK_C_CHAR_ARRAY_STR,
-                      "Select which converter to use"),
-      drain = arg_str0("o", "output", "FILE", "Select an output file"),
-      var_name = arg_str0(NULL, "varname", "NAME",
-                          "Select an name for the C variable"),
-
-      sources =
-          arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE, "An input source"),
-      end = arg_end(20),
-  };
+  void *argtable[] = yam_argtable;
 
   struct yam_config cfg = yam_config_init();
 
@@ -97,10 +97,14 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
     cfg.var_name = var_name->sval[0];
   }
 
-  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-
   return cfg;
 exit:
+  yam_args_free();
   arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
   exit(exitcode);
+}
+
+void yam_args_free(void) {
+  void *argtable[] = yam_argtable;
+  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 }

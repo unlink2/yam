@@ -10,4 +10,6 @@
 
 struct yam_config yam_args_to_config(int argc, char **argv);
 
+void yam_args_free(void);
+
 #endif

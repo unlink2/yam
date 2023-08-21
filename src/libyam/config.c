@@ -81,6 +81,7 @@ void yam_free(struct yam_handle *handle) {
   for (size_t i = 0; i < handle->sources_len; i++) {
     yam_source_free(&handle->sources[i]);
   }
+
   yam_drain_free(&handle->drain);
   yam_sink_free(&handle->sink);
   yam_handle_free(handle);

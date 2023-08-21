@@ -1,5 +1,6 @@
 #include "libyam/test/test.h"
 #include "libyam/test/sink.h"
+#include "libyam/test/expr.h"
 #include "libyam/error.h"
 #include "libyam/log.h"
 
@@ -12,8 +13,8 @@ static int yam_setup(void **state) {
 int main(int arc, char **argv) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test_setup(test_c_char_array_sink, yam_setup),
+      cmocka_unit_test_setup(test_expr, yam_setup),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
-
