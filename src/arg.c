@@ -100,7 +100,6 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   return cfg;
 exit:
   yam_args_free();
-  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
   exit(exitcode);
 }
 
