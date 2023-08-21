@@ -13,6 +13,7 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
 
   self.from = from;
   self.read = read;
+  self.type = type;
 
   return self;
 }
