@@ -31,7 +31,13 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   drain = arg_str0("o", "output", "FILE", "Select an output file");
   var_name =
       arg_str0(NULL, "varname", "NAME", "Select an name for the C variable");
-  sources = arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE, "An input source");
+  sources =
+      arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
+               "Provide an input source. By default input sources are treated "
+               "as input files. It is also possible to prefix the source with "
+               "one of the followign: " YAM_PREFIX_FILE " " YAM_PREFIX_STRING
+               " " YAM_PREFIX_HEX_STRING " or " YAM_PREFIX_PADDING
+               " (e.g. " YAM_PREFIX_STRING ":example)");
   end = arg_end(20);
 
   void *argtable[] = yam_argtable;
