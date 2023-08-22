@@ -15,7 +15,7 @@ void test_c_char_array_sink(void **state) {
     FILE *f = tmpfile();
     struct yam_drain drain = yam_drain_file(f);
 
-    struct yam_sink sink = yam_sink_c_char_array(1, "test_array");
+    struct yam_sink sink = yam_sink_c_char_array(1, strdup("test_array"));
 
     const size_t data_len = 3;
     const char data[] = {'a', 'b', 'c'};
