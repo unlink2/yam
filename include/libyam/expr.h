@@ -20,5 +20,6 @@ const char *yam_tok_trim(const char *tok, size_t *len);
 
 // converts a token to int
 int yam_tok_to_int(const char *tok, size_t len);
+float yam_tok_to_float(const char *tok, size_t len);
 
 #endif

@@ -9,6 +9,9 @@
 #define YAM_SINK_C_CHAR_ARRAY_STR "cchar"
 #define YAM_SINK_ECHO_STR "echo"
 
+#define YAM_SINK_ENDIANESS "endianess="
+#define YAM_SINK_SIGNED_INT "sing="
+#define YAM_SINK_INT_FMT "fmt="
 #define YAM_SINK_VAR_NAME "name="
 
 // allow specifying endianess with f32:le or f32:be
@@ -26,6 +29,10 @@
 #define YAM_SINK_STD_VAR_NAME "var"
 
 struct yam_config;
+
+enum yam_endianess { YAM_ENDIANESS_LITTLE, YAM_ENDIANESS_BIG };
+
+enum yam_int_fmt { YAM_FMT_HEX, YAM_FMT_BIN, YAM_FMT_OCT, YAM_FMT_DEC };
 
 enum yam_sinks { YAM_SINK_C_CHAR_ARRAY, YAM_SINK_ECHO };
 

@@ -75,3 +75,15 @@ int yam_tok_to_int(const char *tok, size_t len) {
 
   return result;
 }
+
+float yam_tok_to_float(const char *tok, size_t len) {
+  char *end = NULL;
+  float result = strtof(tok, &end);
+
+  if (end != tok + len) {
+    yam_err_fset(YAM_ERR_FLOAT_CONVERSION, "Unable to convert '%.*s' to float!\n",
+                 (int)len, tok);
+  }
+
+  return result;
+}

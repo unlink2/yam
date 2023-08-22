@@ -57,6 +57,17 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
       return yam_source_file(yam_fopen(subcmd_val, "re", stdin), from, read);
     }
 
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_INT32, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_int32(yam_tok_to_int(subcmd_val, subcmd_val_len));
+    }
+
+    subcmd_val =
+        yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_FLOAT32, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_float32(yam_tok_to_float(subcmd_val, subcmd_val_len));
+    }
+
     if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
       yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment: '%.*s'\n",
                    (int)len, cmd);
@@ -66,6 +77,18 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
 
   // default case just assumes file path input
   return yam_source_file(yam_fopen(expr, "re", stdin), from, read);
+}
+
+struct yam_source yam_source_int32(int32_t ival) {
+  struct yam_source self = yam_source_init(YAM_INT32, 0, sizeof(ival));
+  self.ival = ival;
+  return self;
+}
+
+struct yam_source yam_source_float32(float fval) {
+  struct yam_source self = yam_source_init(YAM_FLOAT32, 0, sizeof(fval));
+  self.fval = fval;
+  return self;
 }
 
 struct yam_source yam_source_string(const char *sval, int from, int read) {
@@ -136,6 +159,17 @@ size_t yam_source_read_string(const struct yam_source *self, char *buffer,
   return read_amount;
 }
 
+size_t yam_source_read_ptr(const struct yam_source *self, char *buffer,
+                           size_t buffer_len, void *data) {
+  if (self->total_written > self->read) {
+    return 0;
+  }
+
+  size_t read_amount = MIN(buffer_len, self->read - self->total_written);
+  memcpy(buffer, (char *)data + self->total_written, read_amount);
+  return read_amount;
+}
+
 size_t yam_source_read(struct yam_source *self, char *buffer,
                        size_t buffer_len) {
   size_t written = 0;
@@ -146,6 +180,13 @@ size_t yam_source_read(struct yam_source *self, char *buffer,
   case YAM_STRING:
     written = yam_source_read_string(self, buffer, buffer_len);
     break;
+  case YAM_INT32:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->ival);
+    break;
+  case YAM_FLOAT32:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->fval);
+    break;
+
   case YAM_HEX_STRING:
   case YAM_PADDING:
     break;
