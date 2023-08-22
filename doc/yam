@@ -22,6 +22,8 @@
     cchar[:variable name]
   -o, --output=FILE         
     Select an output file
+  -t, --total
+    Output total amount read to stdout
   INPUT                     
     Provide an input source. By default input sources are treated
     as input files. It is also possible to prefix the source 

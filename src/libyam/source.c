@@ -19,14 +19,6 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
 }
 
 struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
-  /*  TODO:
-      Implement input source syntax that allows like this:
-      No specific syntax -> file path
-      hex:01 02 02 -> hex string
-      file:/path/to/file -> file path
-      str:Hello world -> regular string
-      pad:0:100:0 -> pad with 100 * '0' with an increment of 0
-  */
   // find first token
   size_t len = 0;
   const char *cmd = yam_tok_next(expr, YAM_TOK_STD_TERM, &len);

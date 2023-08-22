@@ -69,6 +69,7 @@ struct yam_handle yam_init(struct yam_config *cfg) {
   struct yam_drain drain = yam_drain_from(cfg, cfg->drain_expr);
 
   handle = yam_handle_init(sources, sources_len, sink, drain);
+  handle.print_total_read = cfg->print_total_read;
 
   return handle;
 }

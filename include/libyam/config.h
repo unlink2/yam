@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include "libyam/handle.h"
 #include "libyam/drain.h"
+#include "libyam/macros.h"
 #include "libyam/sink.h"
 
 #define YAM_STD_FILE "-"
@@ -16,6 +17,8 @@ struct yam_config {
 
   const char *sink_expr;
   const char *drain_expr;
+
+  bool print_total_read;
 };
 
 int yam_main(struct yam_config *cfg);
