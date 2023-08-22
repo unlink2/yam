@@ -23,6 +23,7 @@
 #define YAM_SINK_INT32_STR "i32"
 #define YAM_SINK_INT64_STR "i64"
 
+#define YAM_SINK_STD_VAR_NAME "var"
 
 struct yam_config;
 

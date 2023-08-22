@@ -1,4 +1,6 @@
 #include "libyam/sink.h"
+#include "libyam/config.h"
+#include "libyam/drain.h"
 #include "libyam/error.h"
 #include "libyam/test/test.h"
 #include <cmocka.h>
@@ -34,5 +36,49 @@ void test_c_char_array_sink(void **state) {
     yam_drain_free(&drain);
 
     fclose(f);
+  }
+}
+
+void test_sink(void **state) {
+  struct yam_config cfg = yam_config_init();
+  {
+    // echo
+    struct yam_sink s = yam_sink_from(&cfg, "echo");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_ECHO, s.type);
+  }
+  {
+    // c-char
+    struct yam_sink s = yam_sink_from(&cfg, "");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_C_CHAR_ARRAY, s.type);
+    assert_string_equal(YAM_SINK_STD_VAR_NAME, s.var_name);
+
+    yam_sink_free(&s);
+  }
+  {
+    // c-char with name
+    struct yam_sink s = yam_sink_from(&cfg, "cchar:name=test");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_C_CHAR_ARRAY, s.type);
+    assert_string_equal("test", s.var_name);
+
+    yam_sink_free(&s);
+  }
+  {
+    // default case
+    struct yam_sink s = yam_sink_from(&cfg, "");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_C_CHAR_ARRAY, s.type);
+    assert_string_equal(YAM_SINK_STD_VAR_NAME, s.var_name);
+
+    yam_sink_free(&s);
+  }
+  {
+    // invalid input
+    struct yam_sink s = yam_sink_from(&cfg, "cchar:test=invalid");
+    assert_int_equal(YAM_ERR_EXPR_SYNTAX, yam_err());
+
+    yam_sink_free(&s);
   }
 }

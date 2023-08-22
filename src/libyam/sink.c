@@ -6,9 +6,11 @@
 #include "libyam/expr.h"
 #include <string.h>
 
-#define YAM_SINK_STD_VAR_NAME "var"
-
 struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
+  if (expr[0] == '\0') {
+    expr = YAM_SINK_C_CHAR_ARRAY_STR;
+  }
+
   struct yam_sink sink;
   memset(&sink, 0, sizeof(sink));
 

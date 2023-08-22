@@ -3,4 +3,6 @@
 
 void test_c_char_array_sink(void **state);
 
+void test_sink(void **state);
+
 #endif

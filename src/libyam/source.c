@@ -11,7 +11,7 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
 
   memset(&self, 0, sizeof(self));
 
-  // TODO: make these asserts yam_errs
+  // TODO: make these asserts yam_errs and test them
   yam_dbg_assert(from >= 0);
   self.from = from;
   self.read = read;
@@ -21,6 +21,10 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
 }
 
 struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
+  if (expr[0] == '\0') {
+    expr = YAM_STD_FILE;
+  }
+
   // find first token
   size_t len = 0;
   const char *cmd = yam_tok_next(expr, YAM_TOK_STD_TERM, &len);
@@ -53,9 +57,11 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
       return yam_source_file(yam_fopen(subcmd_val, "re", stdin), from, read);
     }
 
-    yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment: '%.*s'\n", (int)len,
-                 cmd);
-    return yam_source_init(0, 0, 0);
+    if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
+      yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment: '%.*s'\n",
+                   (int)len, cmd);
+      return yam_source_init(0, 0, 0);
+    }
   } while (subcmd_val != NULL);
 
   // default case just assumes file path input

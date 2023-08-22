@@ -27,6 +27,10 @@ const char *yam_tok_next(const char *input, char term, size_t *parsed_len) {
 
 const char *yam_tok_kv(const char *input, size_t len, const char *key,
                        size_t *parsed_len) {
+  if (!input) {
+    return NULL;
+  }
+
   size_t key_len = strlen(key);
   if (strncmp(key, input, key_len) != 0) {
     return NULL;
