@@ -3,6 +3,7 @@
 #include "libyam/log.h"
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
 const char *yam_tok_next(const char *input, char term, size_t *parsed_len) {
   if (*input == term) {
@@ -22,6 +23,18 @@ const char *yam_tok_next(const char *input, char term, size_t *parsed_len) {
 
   *parsed_len = len;
   return tok_start;
+}
+
+const char *yam_tok_kv(const char *input, size_t len, const char *key,
+                       size_t *parsed_len) {
+  size_t key_len = strlen(key);
+  if (strncmp(key, input, key_len) != 0) {
+    return NULL;
+  }
+
+  const char *value = input + key_len; 
+  *parsed_len = len - key_len;
+  return value;
 }
 
 const char *yam_tok_trim(const char *tok, size_t *len) {
@@ -48,4 +61,3 @@ int yam_tok_to_int(const char *tok, size_t len) {
 
   return result;
 }
-

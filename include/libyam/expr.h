@@ -8,6 +8,10 @@
 // finds the next unescaped : and returns a ptr to it
 const char *yam_tok_next(const char *input, char term, size_t *parsed_len);
 
+// checks if a sub token starts with a key, and if so reutrns the value after
+// the key
+const char *yam_tok_kv(const char *input, size_t len, const char *key,
+                       size_t *parsed_len);
 // trims a token
 const char *yam_tok_trim(const char *tok, size_t *len);
 

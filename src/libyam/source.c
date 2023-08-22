@@ -11,8 +11,7 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
 
   memset(&self, 0, sizeof(self));
 
-  // TODO: make these asserts yam_errs 
-  yam_dbg_assert(read == YAM_READ_TO_END || from <= read);
+  // TODO: make these asserts yam_errs
   yam_dbg_assert(from >= 0);
   self.from = from;
   self.read = read;
@@ -29,22 +28,24 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   int from = 0;
   int read = YAM_READ_TO_END;
 
-  // TODO: move config key=value reading to function
-  if (strncmp(YAM_CMD_FROM, cmd, strlen(YAM_CMD_FROM)) == 0) {
-    const char *from_val =
-        yam_tok_next(expr + strlen(YAM_CMD_FROM), YAM_TOK_STD_TERM, &len);
+  const char *subcmd_val = NULL;
+  size_t subcmd_val_len = 0;
 
-    from = yam_tok_to_int(from_val, len);
-    cmd = yam_tok_next(from_val + len, YAM_TOK_STD_TERM, &len);
-  }
+  do {
+    subcmd_val = yam_tok_kv(cmd, len, YAM_CMD_FROM, &subcmd_val_len);
+    if (subcmd_val) {
+      from = yam_tok_to_int(subcmd_val, subcmd_val_len);
+      cmd = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);
+      continue;
+    }
 
-  if (strncmp(YAM_CMD_READ, cmd, strlen(YAM_CMD_READ)) == 0) {
-    const char *read_val =
-        yam_tok_next(cmd + strlen(YAM_CMD_READ), YAM_TOK_STD_TERM, &len);
-
-    read = yam_tok_to_int(read_val, len);
-    cmd = yam_tok_next(read_val + len, YAM_TOK_STD_TERM, &len);
-  }
+    subcmd_val = yam_tok_kv(cmd, len, YAM_CMD_READ, &subcmd_val_len);
+    if (subcmd_val) {
+      read = yam_tok_to_int(subcmd_val, subcmd_val_len);
+      cmd = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);
+      continue;
+    }
+  } while (subcmd_val != NULL);
 
   if (strncmp(YAM_PREFIX_STRING, cmd, len) == 0) {
     const char *val = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);

@@ -58,4 +58,14 @@ void test_expr(void **state) {
     yam_tok_to_int("123 junk", 5);
     assert_int_equal(YAM_ERR_INT_CONVERSION, yam_err());
   }
+  {
+    // kv
+    size_t len = 0;
+    assert_string_equal(
+        "value", yam_tok_kv("key=value", strlen("key=value"), "key=", &len));
+    assert_int_equal(5, len);
+
+    assert_null(
+        yam_tok_kv("key=value", strlen("key=value"), "other_key=", &len));
+  }
 }
