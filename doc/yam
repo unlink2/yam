@@ -33,10 +33,16 @@
     hex[:AB 12] 
     pad[:amount:char:step]
 
+    Additionally it is possible to set other configuration 
+    values ahead of source execution:
+    from=[int]
+    read=[int]
+
 .SH EXAMPLES
   yam example.bin
   yam file:example.bin
   yam "str:example string"
+  yam "from=1:read=2:str:example string"
   yam "hex:AB 12"
   yam pad:100:a
 
