@@ -58,7 +58,7 @@ void test_sink(void **state) {
   }
   {
     // c-char with name
-    struct yam_sink s = yam_sink_from(&cfg, "cchar:name=test");
+    struct yam_sink s = yam_sink_from(&cfg, "name=test:cchar");
     assert_false(yam_err());
     assert_int_equal(YAM_SINK_C_CHAR_ARRAY, s.type);
     assert_string_equal("test", s.var_name);
@@ -76,7 +76,7 @@ void test_sink(void **state) {
   }
   {
     // invalid input
-    struct yam_sink s = yam_sink_from(&cfg, "cchar:test=invalid");
+    struct yam_sink s = yam_sink_from(&cfg, "test=invalid:cchar");
     assert_int_equal(YAM_ERR_EXPR_SYNTAX, yam_err());
 
     yam_sink_free(&s);

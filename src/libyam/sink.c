@@ -15,34 +15,43 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   memset(&sink, 0, sizeof(sink));
 
   size_t len = 0;
-  const char *type = yam_tok_next(expr, YAM_TOK_STD_TERM, &len);
+  const char *cmd = yam_tok_next(expr, YAM_TOK_STD_TERM, &len);
+  const char *subcmd_val = NULL;
 
-  if (!type) {
-    sink = yam_sink_c_char_array(1, strdup(YAM_SINK_STD_VAR_NAME));
-  } else if (strncmp(YAM_SINK_C_CHAR_ARRAY_STR, type, len) == 0) {
+  // possible variables that can be set
+  // are defined here
+  const char *var_name = YAM_SINK_STD_VAR_NAME;
+  size_t var_name_len = strlen(var_name);
 
-    const char *var_name = yam_tok_next(expr + len, YAM_TOK_STD_TERM, &len);
-    if (!var_name) {
-      var_name = YAM_SINK_STD_VAR_NAME;
-      len = strlen(var_name);
-    } else {
-      size_t subcmd_val_len = 0;
-      const char *subcmd_val =
-          yam_tok_kv_adv(&var_name, &len, YAM_SINK_VAR_NAME, &subcmd_val_len);
-      if (subcmd_val) {
-        var_name = subcmd_val;
-      } else {
-        yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment '%.*s'\n",
-                     (int)len, var_name);
-      }
+  do {
+    size_t subcmd_val_len = 0;
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_SINK_VAR_NAME, &subcmd_val_len);
+    if (subcmd_val) {
+      var_name = subcmd_val;
+      var_name_len = subcmd_val_len;
+      continue;
     }
 
-    sink = yam_sink_c_char_array(1, strndup(var_name, len));
-  } else if (strncmp(YAM_SINK_ECHO_STR, type, len) == 0) {
-    sink = yam_sink_init(YAM_SINK_ECHO, 1);
-  } else {
-    yam_err_fset(YAM_ERR_INVAL_SINK, "Invalid sink type '%s'\n", expr);
-  }
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_SINK_ECHO_STR, &subcmd_val_len);
+    if (subcmd_val) {
+      sink = yam_sink_init(YAM_SINK_ECHO, 1);
+      break;
+    }
+
+    subcmd_val =
+        yam_tok_kv_adv(&cmd, &len, YAM_SINK_C_CHAR_ARRAY_STR, &subcmd_val_len);
+    if (subcmd_val) {
+      sink = yam_sink_c_char_array(1, strndup(var_name, var_name_len));
+      break;
+    }
+
+    if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
+      yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment: '%.*s'\n",
+                   (int)len, cmd);
+      break;
+    }
+  } while (subcmd_val != NULL);
+
   return sink;
 }
 

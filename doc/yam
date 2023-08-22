@@ -19,7 +19,7 @@
   -s, --sink=[sink name]  
     Select which converter to use. 
     Valid sinks:
-    cchar[:name=variable name]
+    [name=[variable name]:]cchar
     echo
   -o, --output=FILE         
     Select an output file
@@ -32,7 +32,7 @@
     file=[path] 
     str=[string] 
     hex=[AB 12] 
-    pad=[char][:amount=[int]:step=[int]]
+    [amount=[int]:step=[int]:]pad=[char]
 
     Additionally it is possible to set other configuration 
     values ahead of source execution:
@@ -45,7 +45,7 @@
   yam "str=example string"
   yam "from=1:read=2:str=example string"
   yam "hex=AB 12"
-  yam pad=char:amount=100:a
+  yam amount=100:step=1:pad=a
 
 .SH SEE ALSO
 
