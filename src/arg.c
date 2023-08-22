@@ -14,30 +14,25 @@ struct arg_str *sources = NULL;
 struct arg_str *sink = NULL;
 struct arg_str *drain = NULL;
 
-struct arg_str *var_name = NULL;
-
 // arg end stores errors
 struct arg_end *end = NULL;
 
 #define yam_argtable                                                           \
-  { help, version, verb, sink, drain, var_name, sources, end, }
+  { help, version, verb, sink, drain, sources, end, }
 
 struct yam_config yam_args_to_config(int argc, char **argv) {
   help = arg_litn(NULL, "help", 0, 1, "display this help and exit");
   version = arg_litn(NULL, "version", 0, 1, "display version info and exit");
   verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output");
-  sink = arg_str0("s", "sink", YAM_SINK_C_CHAR_ARRAY_STR,
-                  "Select which converter to use");
+  sink = arg_str0("s", "sink", "sink name",
+                  "Select which converter to use. (" YAM_SINK_C_CHAR_ARRAY_STR
+                  "[:name])");
   drain = arg_str0("o", "output", "FILE", "Select an output file");
-  var_name =
-      arg_str0(NULL, "varname", "NAME", "Select an name for the C variable");
-  sources =
-      arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
-               "Provide an input source. By default input sources are treated "
-               "as input files. It is also possible to prefix the source with "
-               "one of the followign: " YAM_PREFIX_FILE " " YAM_PREFIX_STRING
-               " " YAM_PREFIX_HEX_STRING " or " YAM_PREFIX_PADDING
-               " (e.g. " YAM_PREFIX_STRING ":example)");
+  sources = arg_strn(
+      NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
+      "Provide an input source. Valid sources: [path], " YAM_PREFIX_FILE
+      "[:path], " YAM_PREFIX_STRING "[:string], " YAM_PREFIX_HEX_STRING
+      "[:hex string], " YAM_PREFIX_PADDING "[amount:char:step]");
   end = arg_end(20);
 
   void *argtable[] = yam_argtable;
@@ -97,10 +92,6 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
 
   if (drain->count) {
     cfg.drain_expr = drain->sval[0];
-  }
-
-  if (var_name->count) {
-    cfg.var_name = var_name->sval[0];
   }
 
   return cfg;

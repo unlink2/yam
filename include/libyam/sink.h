@@ -6,7 +6,20 @@
 #include <stdio.h>
 
 // TODO: make this system way more dynamic
-#define YAM_SINK_C_CHAR_ARRAY_STR "c-char-array"
+#define YAM_SINK_C_CHAR_ARRAY_STR "cchar"
+
+// allow specifying endianess with f32:le or f32:be
+#define YAM_SINK_FLOAT32_STR "f32"
+#define YAM_SINK_FLOAT64_STR "f64"
+
+// allow specifying sign with i8:s or i8:u
+// allow specifying format with i8:s:x, i8:s:b, i8:s:o or i8:s:d
+// allow specifying endianess with i8:u:d:le or i8:u:d:be
+#define YAM_SINK_INT8_STR "i8"
+#define YAM_SINK_INT16_STR "i16"
+#define YAM_SINK_INT32_STR "i32"
+#define YAM_SINK_INT64_STR "i64"
+
 
 struct yam_config;
 

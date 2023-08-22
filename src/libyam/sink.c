@@ -3,14 +3,29 @@
 #include "libyam/log.h"
 #include "libyam/error.h"
 #include "libyam/config.h"
+#include "libyam/expr.h"
 #include <string.h>
+
+#define YAM_SINK_STD_VAR_NAME "var"
 
 struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   struct yam_sink sink;
   memset(&sink, 0, sizeof(sink));
 
-  if (strcmp("", expr) == 0 || strcmp(YAM_SINK_C_CHAR_ARRAY_STR, expr) == 0) {
-    sink = yam_sink_c_char_array(1, cfg->var_name);
+  size_t len = 0;
+  const char *type = yam_tok_next(expr, YAM_TOK_STD_TERM, &len);
+
+  if (!type) {
+    sink = yam_sink_c_char_array(1, strdup(YAM_SINK_STD_VAR_NAME));
+  } else if (strncmp(YAM_SINK_C_CHAR_ARRAY_STR, type, len) == 0) {
+    const char *var_name = yam_tok_next(expr + len, YAM_TOK_STD_TERM, &len);
+
+    if (!var_name) {
+      var_name = YAM_SINK_STD_VAR_NAME;
+      len = strlen(var_name);
+    }
+
+    sink = yam_sink_c_char_array(1, strndup(var_name, len));
   } else {
     yam_err_fset(YAM_ERR_INVAL_SINK, "Invalid sink type '%s'\n", expr);
   }
@@ -77,4 +92,10 @@ size_t yam_sink_end(struct yam_sink *self, struct yam_drain *drain) {
   return 0;
 }
 
-void yam_sink_free(struct yam_sink *self) {}
+void yam_sink_free(struct yam_sink *self) {
+  switch (self->type) {
+  case YAM_SINK_C_CHAR_ARRAY:
+    free((void *)self->var_name);
+    break;
+  }
+}

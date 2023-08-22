@@ -28,8 +28,6 @@ struct yam_config yam_config_init(void) {
   self.source_exprs = default_sources;
   self.source_exprs_len = default_sources_len;
 
-  self.var_name = "var";
-
   return self;
 }
 
