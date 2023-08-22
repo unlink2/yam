@@ -20,6 +20,7 @@
     Select which converter to use. 
     Valid sinks:
     cchar[:variable name]
+    echo
   -o, --output=FILE         
     Select an output file
   -t, --total

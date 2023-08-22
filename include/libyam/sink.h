@@ -7,6 +7,7 @@
 
 // TODO: make this system way more dynamic
 #define YAM_SINK_C_CHAR_ARRAY_STR "cchar"
+#define YAM_SINK_ECHO_STR "echo"
 
 // allow specifying endianess with f32:le or f32:be
 #define YAM_SINK_FLOAT32_STR "f32"
@@ -23,7 +24,7 @@
 
 struct yam_config;
 
-enum yam_sinks { YAM_SINK_C_CHAR_ARRAY };
+enum yam_sinks { YAM_SINK_C_CHAR_ARRAY, YAM_SINK_ECHO };
 
 struct yam_sink {
   enum yam_sinks type;

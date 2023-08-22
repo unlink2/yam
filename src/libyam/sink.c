@@ -26,6 +26,8 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
     }
 
     sink = yam_sink_c_char_array(1, strndup(var_name, len));
+  } else if (strncmp(YAM_SINK_ECHO_STR, type, len) == 0) {
+    sink = yam_sink_init(YAM_SINK_ECHO, 1);
   } else {
     yam_err_fset(YAM_ERR_INVAL_SINK, "Invalid sink type '%s'\n", expr);
   }
@@ -53,6 +55,7 @@ size_t yam_sink_start(struct yam_sink *self, struct yam_drain *drain) {
   switch (self->type) {
   case YAM_SINK_C_CHAR_ARRAY:
     return yam_drain_fprintf(drain, "const char %s[] = { ", self->var_name);
+  default:
     break;
   }
 
@@ -76,6 +79,9 @@ size_t yam_sink_convert(struct yam_sink *self, struct yam_drain *drain,
   switch (self->type) {
   case YAM_SINK_C_CHAR_ARRAY:
     return yam_sink_convert_c_char_array(self, drain, data, data_len);
+  case YAM_SINK_ECHO:
+    return yam_drain_fprintf(drain, "%.*s", data_len, data); 
+  default:
     break;
   }
 
@@ -86,6 +92,7 @@ size_t yam_sink_end(struct yam_sink *self, struct yam_drain *drain) {
   switch (self->type) {
   case YAM_SINK_C_CHAR_ARRAY:
     return yam_drain_fprintf(drain, "};");
+  default:
     break;
   }
 
@@ -96,6 +103,8 @@ void yam_sink_free(struct yam_sink *self) {
   switch (self->type) {
   case YAM_SINK_C_CHAR_ARRAY:
     free((void *)self->var_name);
+    break;
+  default:
     break;
   }
 }

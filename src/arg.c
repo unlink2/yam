@@ -28,7 +28,7 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output");
   sink = arg_str0("s", "sink", "sink name",
                   "Select which converter to use. (" YAM_SINK_C_CHAR_ARRAY_STR
-                  "[:variable name])");
+                  "[:variable name], " YAM_SINK_ECHO_STR ")");
   total_read = arg_lit0("t", "total", "Output total amount read to stdout");
   drain = arg_str0("o", "output", "FILE", "Select an output file");
   sources = arg_strn(
