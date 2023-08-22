@@ -2,6 +2,7 @@
 #include "libyam/config.h"
 #include "libyam/log.h"
 #include "libyam/sink.h"
+#include "libyam/data.h"
 #include <argtable2.h>
 
 #define YAM_MAX_SOURCE 1028
@@ -36,7 +37,9 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
       NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
       "Provide an input source. Valid sources: [path], " YAM_PREFIX_FILE
       "[path], " YAM_PREFIX_STRING "[string], " YAM_PREFIX_HEX_STRING
-      "[hex string], [amount=[int]:step=[int]:]" YAM_PREFIX_PADDING "[char]");
+      "[hex string], [amount=[int]:step=[int]:]" YAM_PREFIX_PADDING
+      "[char], [endianess=[big|little]:]" YAM_PREFIX_INT32
+      "[int32], [endianess=[big|little]:]" YAM_PREFIX_FLOAT32 "[float32]");
   end = arg_end(20);
 
   void *argtable[] = yam_argtable;
