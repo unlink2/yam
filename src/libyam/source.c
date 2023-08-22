@@ -11,6 +11,7 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
 
   memset(&self, 0, sizeof(self));
 
+  // TODO: make these asserts yam_errs 
   yam_dbg_assert(read == YAM_READ_TO_END || from <= read);
   yam_dbg_assert(from >= 0);
   self.from = from;
