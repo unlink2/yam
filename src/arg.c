@@ -35,7 +35,7 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
       NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
       "Provide an input source. Valid sources: [path], " YAM_PREFIX_FILE
       "[path], " YAM_PREFIX_STRING "[string], " YAM_PREFIX_HEX_STRING
-      "[hex string], " YAM_PREFIX_PADDING "=[char][amount=[int]:step=[int]]");
+      "[hex string], " YAM_PREFIX_PADDING "[char][:amount=[int]:step=[int]]");
   end = arg_end(20);
 
   void *argtable[] = yam_argtable;
