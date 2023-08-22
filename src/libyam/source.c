@@ -28,6 +28,7 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   int from = 0;
   int read = YAM_READ_TO_END;
 
+  // TODO: move config key=value reading to function
   if (strncmp(YAM_CMD_FROM, cmd, strlen(YAM_CMD_FROM)) == 0) {
     const char *from_val =
         yam_tok_next(expr + strlen(YAM_CMD_FROM), YAM_TOK_STD_TERM, &len);
