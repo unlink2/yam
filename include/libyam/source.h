@@ -1,6 +1,7 @@
 #ifndef SOURCES_H_
 #define SOURCES_H_
 
+#include "libyam/data.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -50,8 +51,8 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read);
 struct yam_source yam_source_from(struct yam_config *cfg, const char *expr);
 struct yam_source yam_source_file(FILE *f, int from, int read);
 struct yam_source yam_source_string(const char *sval, int from, int read);
-struct yam_source yam_source_int32(int32_t ival);
-struct yam_source yam_source_float32(float fval);
+struct yam_source yam_source_int32(int32_t ival, enum yam_endianess endianess);
+struct yam_source yam_source_float32(float fval, enum yam_endianess endianess);
 
 // read from a source into buffer
 // returns amount of bytes written or 0 if no more writes need to be done

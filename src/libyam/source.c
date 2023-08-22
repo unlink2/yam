@@ -4,6 +4,9 @@
 #include "libyam/macros.h"
 #include "libyam/error.h"
 #include "libyam/log.h"
+#include "libyam/sink.h"
+#include "libyam/data.h"
+#include <endian.h>
 #include <string.h>
 
 struct yam_source yam_source_init(enum yam_sources type, int from, int read) {
@@ -31,6 +34,7 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
 
   int from = 0;
   int read = YAM_READ_TO_END;
+  enum yam_endianess endianess = YAM_ENDIANESS_LITTLE;
 
   const char *subcmd_val = NULL;
   do {
@@ -47,6 +51,12 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
       continue;
     }
 
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_CMD_ENDIANESS, &subcmd_val_len);
+    if (subcmd_val) {
+      endianess = yam_endianess_from(subcmd_val, subcmd_val_len);
+      continue;
+    }
+
     subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_STRING, &subcmd_val_len);
     if (subcmd_val) {
       return yam_source_string(subcmd_val, from, read);
@@ -59,13 +69,15 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
 
     subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_INT32, &subcmd_val_len);
     if (subcmd_val) {
-      return yam_source_int32(yam_tok_to_int(subcmd_val, subcmd_val_len));
+      return yam_source_int32(yam_tok_to_int(subcmd_val, subcmd_val_len),
+                              endianess);
     }
 
     subcmd_val =
         yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_FLOAT32, &subcmd_val_len);
     if (subcmd_val) {
-      return yam_source_float32(yam_tok_to_float(subcmd_val, subcmd_val_len));
+      return yam_source_float32(yam_tok_to_float(subcmd_val, subcmd_val_len),
+                                endianess);
     }
 
     if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
@@ -79,15 +91,28 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   return yam_source_file(yam_fopen(expr, "re", stdin), from, read);
 }
 
-struct yam_source yam_source_int32(int32_t ival) {
+struct yam_source yam_source_int32(int32_t ival, enum yam_endianess endianess) {
   struct yam_source self = yam_source_init(YAM_INT32, 0, sizeof(ival));
-  self.ival = ival;
+  if (endianess == YAM_ENDIANESS_LITTLE) {
+    self.ival = htole32(ival);
+  } else {
+    self.ival = htobe32(ival);
+  }
+
   return self;
 }
 
-struct yam_source yam_source_float32(float fval) {
+struct yam_source yam_source_float32(float fval, enum yam_endianess endianess) {
   struct yam_source self = yam_source_init(YAM_FLOAT32, 0, sizeof(fval));
   self.fval = fval;
+
+  int32_t *pfval = (void *)&self.fval;
+  if (endianess == YAM_ENDIANESS_LITTLE) {
+    *pfval = htole32(*pfval);
+  } else {
+    *pfval = htobe32(*pfval);
+  }
+
   return self;
 }
 

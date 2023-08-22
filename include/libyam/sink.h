@@ -30,9 +30,6 @@
 
 struct yam_config;
 
-enum yam_endianess { YAM_ENDIANESS_LITTLE, YAM_ENDIANESS_BIG };
-
-enum yam_int_fmt { YAM_FMT_HEX, YAM_FMT_BIN, YAM_FMT_OCT, YAM_FMT_DEC };
 
 enum yam_sinks { YAM_SINK_C_CHAR_ARRAY, YAM_SINK_ECHO };
 

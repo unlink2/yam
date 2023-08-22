@@ -4,6 +4,7 @@
 #include "libyam/error.h"
 #include "libyam/config.h"
 #include "libyam/expr.h"
+#include "libyam/data.h"
 #include <string.h>
 
 struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
@@ -26,7 +27,7 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   enum yam_endianess endianess = YAM_ENDIANESS_LITTLE;
   bool signed_int = false;
 
-  enum yam_int_fmt int_fmy = YAM_FMT_HEX;
+  enum yam_int_fmt int_fmt = YAM_FMT_HEX;
 
   do {
     size_t subcmd_val_len = 0;
