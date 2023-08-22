@@ -9,6 +9,8 @@
 #define YAM_SINK_C_CHAR_ARRAY_STR "cchar"
 #define YAM_SINK_ECHO_STR "echo"
 
+#define YAM_SINK_VAR_NAME "name="
+
 // allow specifying endianess with f32:le or f32:be
 #define YAM_SINK_FLOAT32_STR "f32"
 #define YAM_SINK_FLOAT64_STR "f64"

@@ -19,7 +19,7 @@
   -s, --sink=[sink name]  
     Select which converter to use. 
     Valid sinks:
-    cchar[:variable name]
+    cchar[:name=variable name]
     echo
   -o, --output=FILE         
     Select an output file
@@ -29,10 +29,10 @@
     Provide an input source. By default input sources are treated
     as input files. It is also possible to prefix the source 
     with one of the followign: 
-    file[:path] 
-    str[:string] 
-    hex[:AB 12] 
-    pad[:amount:char:step]
+    file=[path] 
+    str=[string] 
+    hex=[AB 12] 
+    pad=[char][:amount=[int]:step=[int]]
 
     Additionally it is possible to set other configuration 
     values ahead of source execution:
@@ -41,11 +41,11 @@
 
 .SH EXAMPLES
   yam example.bin
-  yam file:example.bin
-  yam "str:example string"
-  yam "from=1:read=2:str:example string"
-  yam "hex:AB 12"
-  yam pad:100:a
+  yam file=example.bin
+  yam "str=example string"
+  yam "from=1:read=2:str=example string"
+  yam "hex=AB 12"
+  yam pad=char:amount=100:a
 
 .SH SEE ALSO
 

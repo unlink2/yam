@@ -12,6 +12,9 @@ const char *yam_tok_next(const char *input, char term, size_t *parsed_len);
 // the key
 const char *yam_tok_kv(const char *input, size_t len, const char *key,
                        size_t *parsed_len);
+
+const char *yam_tok_kv_adv(const char **input, size_t *len, const char *key, size_t *parsed_len);
+
 // trims a token
 const char *yam_tok_trim(const char *tok, size_t *len);
 

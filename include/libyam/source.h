@@ -5,10 +5,10 @@
 
 #define YAM_READ_TO_END (-1)
 
-#define YAM_PREFIX_FILE "file:"
-#define YAM_PREFIX_STRING "str:"
-#define YAM_PREFIX_HEX_STRING "hex:"
-#define YAM_PREFIX_PADDING "pad:"
+#define YAM_PREFIX_FILE "file="
+#define YAM_PREFIX_STRING "str="
+#define YAM_PREFIX_HEX_STRING "hex="
+#define YAM_PREFIX_PADDING "pad="
 
 #define YAM_CMD_FROM "from="
 #define YAM_CMD_READ "read="

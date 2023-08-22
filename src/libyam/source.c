@@ -29,31 +29,34 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   int read = YAM_READ_TO_END;
 
   const char *subcmd_val = NULL;
-  size_t subcmd_val_len = 0;
-
   do {
-    subcmd_val = yam_tok_kv(cmd, len, YAM_CMD_FROM, &subcmd_val_len);
+    size_t subcmd_val_len = 0;
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_CMD_FROM, &subcmd_val_len);
     if (subcmd_val) {
       from = yam_tok_to_int(subcmd_val, subcmd_val_len);
-      cmd = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);
       continue;
     }
 
-    subcmd_val = yam_tok_kv(cmd, len, YAM_CMD_READ, &subcmd_val_len);
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_CMD_READ, &subcmd_val_len);
     if (subcmd_val) {
       read = yam_tok_to_int(subcmd_val, subcmd_val_len);
-      cmd = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);
       continue;
     }
-  } while (subcmd_val != NULL);
 
-  if (strncmp(YAM_PREFIX_STRING, cmd, len) == 0) {
-    const char *val = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);
-    return yam_source_string(val, from, read);
-  } else if (strncmp(YAM_PREFIX_FILE, cmd, len) == 0) {
-    const char *val = yam_tok_next(cmd + len, YAM_TOK_STD_TERM, &len);
-    return yam_source_file(yam_fopen(val, "re", stdin), from, read);
-  }
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_STRING, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_string(subcmd_val, from, read);
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_FILE, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_file(yam_fopen(subcmd_val, "re", stdin), from, read);
+    }
+
+    yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment: '%.*s'\n", (int)len,
+                 cmd);
+    return yam_source_init(0, 0, 0);
+  } while (subcmd_val != NULL);
 
   // default case just assumes file path input
   return yam_source_file(yam_fopen(expr, "re", stdin), from, read);

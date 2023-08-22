@@ -68,4 +68,26 @@ void test_expr(void **state) {
     assert_null(
         yam_tok_kv("key=value", strlen("key=value"), "other_key=", &len));
   }
+  {
+    // kv advance
+    const char *test = "key=value:after";
+    size_t len = strlen("key=value");
+    size_t parsed_len = 0;
+
+    assert_string_equal("value:after",
+                        yam_tok_kv_adv(&test, &len, "key=", &parsed_len));
+    assert_int_equal(5, parsed_len);
+    assert_string_equal("after", test);
+    assert_int_equal(5, len);
+  }
+  {
+    // kv advance
+    const char *test = "key=value:after";
+    size_t len = strlen("key=value");
+    size_t parsed_len = 0;
+
+    assert_null(yam_tok_kv_adv(&test, &len, "ohter_key=", &parsed_len));
+    assert_string_equal("key=value:after", test);
+    assert_int_equal(strlen("key=value"), len);
+  }
 }

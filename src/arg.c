@@ -28,14 +28,14 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output");
   sink = arg_str0("s", "sink", "sink name",
                   "Select which converter to use. (" YAM_SINK_C_CHAR_ARRAY_STR
-                  "[:variable name], " YAM_SINK_ECHO_STR ")");
+                  "[:name=[variable name]], " YAM_SINK_ECHO_STR ")");
   total_read = arg_lit0("t", "total", "Output total amount read to stdout");
   drain = arg_str0("o", "output", "FILE", "Select an output file");
   sources = arg_strn(
       NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
       "Provide an input source. Valid sources: [path], " YAM_PREFIX_FILE
-      "[:path], " YAM_PREFIX_STRING "[:string], " YAM_PREFIX_HEX_STRING
-      "[:hex string], " YAM_PREFIX_PADDING "[amount:char:step]");
+      "[path], " YAM_PREFIX_STRING "[string], " YAM_PREFIX_HEX_STRING
+      "[hex string], " YAM_PREFIX_PADDING "=[char][amount=[int]:step=[int]]");
   end = arg_end(20);
 
   void *argtable[] = yam_argtable;

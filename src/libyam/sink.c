@@ -18,11 +18,21 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   if (!type) {
     sink = yam_sink_c_char_array(1, strdup(YAM_SINK_STD_VAR_NAME));
   } else if (strncmp(YAM_SINK_C_CHAR_ARRAY_STR, type, len) == 0) {
-    const char *var_name = yam_tok_next(expr + len, YAM_TOK_STD_TERM, &len);
 
+    const char *var_name = yam_tok_next(expr + len, YAM_TOK_STD_TERM, &len);
     if (!var_name) {
       var_name = YAM_SINK_STD_VAR_NAME;
       len = strlen(var_name);
+    } else {
+      size_t subcmd_val_len = 0;
+      const char *subcmd_val =
+          yam_tok_kv_adv(&var_name, &len, YAM_SINK_VAR_NAME, &subcmd_val_len);
+      if (subcmd_val) {
+        var_name = subcmd_val;
+      } else {
+        yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment '%.*s'\n",
+                     (int)len, var_name);
+      }
     }
 
     sink = yam_sink_c_char_array(1, strndup(var_name, len));
@@ -80,7 +90,7 @@ size_t yam_sink_convert(struct yam_sink *self, struct yam_drain *drain,
   case YAM_SINK_C_CHAR_ARRAY:
     return yam_sink_convert_c_char_array(self, drain, data, data_len);
   case YAM_SINK_ECHO:
-    return yam_drain_fprintf(drain, "%.*s", data_len, data); 
+    return yam_drain_fprintf(drain, "%.*s", data_len, data);
   default:
     break;
   }

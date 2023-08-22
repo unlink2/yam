@@ -32,7 +32,7 @@ const char *yam_tok_kv(const char *input, size_t len, const char *key,
     return NULL;
   }
 
-  const char *value = input + key_len; 
+  const char *value = input + key_len;
   *parsed_len = len - key_len;
   return value;
 }
@@ -48,6 +48,16 @@ const char *yam_tok_trim(const char *tok, size_t *len) {
   }
 
   return tok;
+}
+
+const char *yam_tok_kv_adv(const char **input, size_t *len, const char *key,
+                           size_t *parsed_len) {
+  const char *subcmd_val = yam_tok_kv(*input, *len, key, parsed_len);
+  if (subcmd_val) {
+    *input = yam_tok_next(*input + *len, YAM_TOK_STD_TERM, len);
+  }
+
+  return subcmd_val;
 }
 
 int yam_tok_to_int(const char *tok, size_t len) {
