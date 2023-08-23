@@ -277,8 +277,17 @@ size_t yam_source_read(struct yam_source *self, char *buffer,
   case YAM_STRING:
     written = yam_source_read_string(self, buffer, buffer_len);
     break;
+  case YAM_BYTE:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->byteval);
+    break;
+  case YAM_SHORT:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->shortval);
+    break;
   case YAM_INT:
     written = yam_source_read_ptr(self, buffer, buffer_len, &self->intval);
+    break;
+  case YAM_LONG:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->longval);
     break;
   case YAM_FLOAT:
     written = yam_source_read_ptr(self, buffer, buffer_len, &self->fval);
