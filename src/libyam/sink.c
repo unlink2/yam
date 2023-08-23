@@ -24,9 +24,9 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   const char *var_name = YAM_SINK_STD_VAR_NAME;
   size_t var_name_len = strlen(var_name);
 
-  /*enum yam_endianess endianess = YAM_ENDIANESS_LITTLE;
-  bool signed_int = false;
-  enum yam_int_fmt int_fmt = YAM_FMT_HEX;*/
+  enum yam_endianess endianess = YAM_ENDIANESS_LITTLE;
+  enum yam_int_sign int_sign = YAM_FMT_SIGNED;
+  enum yam_int_fmt int_fmt = YAM_FMT_HEX;
 
   do {
     size_t subcmd_val_len = 0;

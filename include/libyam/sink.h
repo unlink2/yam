@@ -1,6 +1,7 @@
 #ifndef MAP_H_
 #define MAP_H_
 
+#include "libyam/data.h"
 #include "libyam/drain.h"
 #include <stddef.h>
 #include <stdio.h>
@@ -15,29 +16,45 @@
 #define YAM_SINK_VAR_NAME "name="
 
 // allow specifying endianess with f32:le or f32:be
-#define YAM_SINK_FLOAT32_STR "f32"
-#define YAM_SINK_FLOAT64_STR "f64"
+#define YAM_SINK_FLOAT_STR "float"
+#define YAM_SINK_DOUBLE_STR "double"
 
 // allow specifying sign with i8:s or i8:u
 // allow specifying format with i8:s:x, i8:s:b, i8:s:o or i8:s:d
 // allow specifying endianess with i8:u:d:le or i8:u:d:be
-#define YAM_SINK_INT8_STR "i8"
-#define YAM_SINK_INT16_STR "i16"
-#define YAM_SINK_INT32_STR "i32"
-#define YAM_SINK_INT64_STR "i64"
+#define YAM_SINK_BYTE_STR "byte"
+#define YAM_SINK_SHORT_STR "short"
+#define YAM_SINK_INT_STR "int"
+#define YAM_SINK_LONG_STR "long"
 
 #define YAM_SINK_STD_VAR_NAME "var"
 
 struct yam_config;
 
+enum yam_sinks {
+  YAM_SINK_C_CHAR_ARRAY,
+  YAM_SINK_ECHO,
 
-enum yam_sinks { YAM_SINK_C_CHAR_ARRAY, YAM_SINK_ECHO };
+  YAM_SINK_BYTE,
+  YAM_SINK_SHORT,
+  YAM_SINK_INT,
+  YAM_SINK_LONG,
+
+  YAM_SINK_FLOAT,
+  YAM_SINK_DOUBLE,
+};
 
 struct yam_sink {
   enum yam_sinks type;
   size_t stride;
   union {
     const char *var_name;
+    struct {
+      enum yam_endianess int_endianess;
+      enum yam_int_fmt int_fmt;
+      enum yam_int_sign int_sign;
+    };
+    enum yam_endianess float_endianess;
   };
 };
 
