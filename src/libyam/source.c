@@ -150,7 +150,6 @@ struct yam_source yam_source_int(int32_t ival, enum yam_endianess endianess) {
 
 struct yam_source yam_source_long(int64_t ival, enum yam_endianess endianess) {
   struct yam_source self = yam_source_init(YAM_LONG, 0, sizeof(ival));
-
   if (endianess == YAM_ENDIANESS_LITTLE) {
     self.longval = htole64(ival);
   } else {

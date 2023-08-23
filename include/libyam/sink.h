@@ -11,8 +11,8 @@
 #define YAM_SINK_ECHO_STR "echo"
 
 #define YAM_SINK_ENDIANESS "endianess="
-#define YAM_SINK_SIGNED_INT "sing="
-#define YAM_SINK_INT_FMT "fmt="
+#define YAM_SINK_SIGN_INT "sign="
+#define YAM_SINK_FMT_INT "fmt="
 #define YAM_SINK_VAR_NAME "name="
 
 // allow specifying endianess with f32:le or f32:be
@@ -60,6 +60,21 @@ struct yam_sink {
 
 struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr);
 struct yam_sink yam_sink_init(enum yam_sinks type, size_t stride);
+
+struct yam_sink yam_sink_byte(size_t stride, enum yam_int_fmt fmt,
+                              enum yam_int_sign sign);
+
+struct yam_sink yam_sink_short(size_t stride, enum yam_int_fmt fmt,
+                               enum yam_int_sign sign,
+                               enum yam_endianess endianess);
+
+struct yam_sink yam_sink_int(size_t stride, enum yam_int_fmt fmt,
+                             enum yam_int_sign sign,
+                             enum yam_endianess endianess);
+
+struct yam_sink yam_sink_long(size_t stride, enum yam_int_fmt fmt,
+                              enum yam_int_sign sign,
+                              enum yam_endianess endianess);
 
 struct yam_sink yam_sink_c_char_array(size_t stride, const char *var_name);
 
