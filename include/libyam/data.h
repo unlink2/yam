@@ -11,4 +11,4 @@ enum yam_endianess yam_endianess_from(const char *expr, size_t len);
 
 enum yam_int_fmt { YAM_FMT_HEX, YAM_FMT_BIN, YAM_FMT_OCT, YAM_FMT_DEC };
 
-#endif 
+#endif

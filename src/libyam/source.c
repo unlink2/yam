@@ -41,13 +41,13 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
     size_t subcmd_val_len = 0;
     subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_CMD_FROM, &subcmd_val_len);
     if (subcmd_val) {
-      from = yam_tok_to_int(subcmd_val, subcmd_val_len);
+      from = (int)yam_tok_to_int(subcmd_val, subcmd_val_len);
       continue;
     }
 
     subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_CMD_READ, &subcmd_val_len);
     if (subcmd_val) {
-      read = yam_tok_to_int(subcmd_val, subcmd_val_len);
+      read = (int)yam_tok_to_int(subcmd_val, subcmd_val_len);
       continue;
     }
 
@@ -67,17 +67,44 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
       return yam_source_file(yam_fopen(subcmd_val, "re", stdin), from, read);
     }
 
-    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_INT32, &subcmd_val_len);
+    // ints
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_BYTE, &subcmd_val_len);
     if (subcmd_val) {
-      return yam_source_int32(yam_tok_to_int(subcmd_val, subcmd_val_len),
+      return yam_source_byte(
+          (int8_t)yam_tok_to_int(subcmd_val, subcmd_val_len));
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_SHORT, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_short(
+          (int16_t)yam_tok_to_int(subcmd_val, subcmd_val_len), endianess);
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_INT, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_int((int32_t)yam_tok_to_int(subcmd_val, subcmd_val_len),
+                            endianess);
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_LONG, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_long(
+          (int64_t)yam_tok_to_int(subcmd_val, subcmd_val_len), endianess);
+    }
+
+    // floats
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_FLOAT, &subcmd_val_len);
+    if (subcmd_val) {
+      return yam_source_float(yam_tok_to_float(subcmd_val, subcmd_val_len),
                               endianess);
     }
 
-    subcmd_val =
-        yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_FLOAT32, &subcmd_val_len);
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_DOUBLE, &subcmd_val_len);
     if (subcmd_val) {
-      return yam_source_float32(yam_tok_to_float(subcmd_val, subcmd_val_len),
-                                endianess);
+      return yam_source_double(yam_tok_to_float(subcmd_val, subcmd_val_len),
+                               endianess);
     }
 
     if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
@@ -91,19 +118,50 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   return yam_source_file(yam_fopen(expr, "re", stdin), from, read);
 }
 
-struct yam_source yam_source_int32(int32_t ival, enum yam_endianess endianess) {
-  struct yam_source self = yam_source_init(YAM_INT32, 0, sizeof(ival));
+struct yam_source yam_source_byte(int8_t ival) {
+  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+  self.byteval = ival;
+  return self;
+}
+
+struct yam_source yam_source_short(int16_t ival, enum yam_endianess endianess) {
+  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+
   if (endianess == YAM_ENDIANESS_LITTLE) {
-    self.ival = htole32(ival);
+    self.shortval = htole16(ival);
   } else {
-    self.ival = htobe32(ival);
+    self.shortval = htobe16(ival);
   }
 
   return self;
 }
 
-struct yam_source yam_source_float32(float fval, enum yam_endianess endianess) {
-  struct yam_source self = yam_source_init(YAM_FLOAT32, 0, sizeof(fval));
+struct yam_source yam_source_int(int32_t ival, enum yam_endianess endianess) {
+  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+
+  if (endianess == YAM_ENDIANESS_LITTLE) {
+    self.intval = htole32(ival);
+  } else {
+    self.intval = htobe32(ival);
+  }
+
+  return self;
+}
+
+struct yam_source yam_source_long(int64_t ival, enum yam_endianess endianess) {
+  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+
+  if (endianess == YAM_ENDIANESS_LITTLE) {
+    self.longval = htole64(ival);
+  } else {
+    self.longval = htobe64(ival);
+  }
+
+  return self;
+}
+
+struct yam_source yam_source_float(float fval, enum yam_endianess endianess) {
+  struct yam_source self = yam_source_init(YAM_FLOAT, 0, sizeof(fval));
   self.fval = fval;
 
   int32_t *pfval = (void *)&self.fval;
@@ -111,6 +169,20 @@ struct yam_source yam_source_float32(float fval, enum yam_endianess endianess) {
     *pfval = htole32(*pfval);
   } else {
     *pfval = htobe32(*pfval);
+  }
+
+  return self;
+}
+
+struct yam_source yam_source_double(double fval, enum yam_endianess endianess) {
+  struct yam_source self = yam_source_init(YAM_FLOAT, 0, sizeof(fval));
+  self.dval = fval;
+
+  int64_t *pfval = (void *)&self.dval;
+  if (endianess == YAM_ENDIANESS_LITTLE) {
+    *pfval = htole64(*pfval);
+  } else {
+    *pfval = htobe64(*pfval);
   }
 
   return self;
@@ -205,13 +277,15 @@ size_t yam_source_read(struct yam_source *self, char *buffer,
   case YAM_STRING:
     written = yam_source_read_string(self, buffer, buffer_len);
     break;
-  case YAM_INT32:
-    written = yam_source_read_ptr(self, buffer, buffer_len, &self->ival);
+  case YAM_INT:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->intval);
     break;
-  case YAM_FLOAT32:
+  case YAM_FLOAT:
     written = yam_source_read_ptr(self, buffer, buffer_len, &self->fval);
     break;
-
+  case YAM_DOUBLE:
+    written = yam_source_read_ptr(self, buffer, buffer_len, &self->dval);
+    break;
   case YAM_HEX_STRING:
   case YAM_PADDING:
     break;

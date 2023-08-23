@@ -27,19 +27,11 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   help = arg_litn(NULL, "help", 0, 1, "display this help and exit");
   version = arg_litn(NULL, "version", 0, 1, "display version info and exit");
   verb = arg_litn("v", "verbose", 0, YAM_LOG_LEVEL_DBG, "verbose output");
-  sink =
-      arg_str0("s", "sink", "sink name",
-               "Select which converter to use. ([name=[variable "
-               "name]:]" YAM_SINK_C_CHAR_ARRAY_STR ", " YAM_SINK_ECHO_STR ")");
+  sink = arg_str0("s", "sink", "sink name", "Select which converter to use.");
   total_read = arg_lit0("t", "total", "Output total amount read to stdout");
   drain = arg_str0("o", "output", "FILE", "Select an output file");
-  sources = arg_strn(
-      NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
-      "Provide an input source. Valid sources: [path], " YAM_PREFIX_FILE
-      "[path], " YAM_PREFIX_STRING "[string], " YAM_PREFIX_HEX_STRING
-      "[hex string], [amount=[int]:step=[int]:]" YAM_PREFIX_PADDING
-      "[char], [endianess=[big|little]:]" YAM_PREFIX_INT32
-      "[int32], [endianess=[big|little]:]" YAM_PREFIX_FLOAT32 "[float32]");
+  sources = arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
+                     "Provide an input source");
   end = arg_end(20);
 
   void *argtable[] = yam_argtable;

@@ -33,8 +33,12 @@
     str=[string] 
     hex=[AB 12] 
     [amount=[int]:step=[int]:]pad=[char]
-    [endianess=[big|little]:]int32=[int32] 
-    [endianess=[big|little]:]float32=[float32]
+    [endianess=[big|little]:]byte=[int8] 
+    [endianess=[big|little]:]short=[int16] 
+    [endianess=[big|little]:]int=[int32] 
+    [endianess=[big|little]:]long=[int64] 
+    [endianess=[big|little]:]float=[float]
+    [endianess=[big|little]:]double=[double]
 
     Additionally it is possible to set other configuration 
     values ahead of source execution:
@@ -48,8 +52,8 @@
   yam "from=1:read=2:str=example string"
   yam "hex=AB 12"
   yam amount=100:step=1:pad=a
-  yam endianess=big:int32=0xABCD
-  yam endianess=little:float32=3.14
+  yam endianess=big:int=0xABCD
+  yam endianess=little:float=3.14
 
 .SH SEE ALSO
 

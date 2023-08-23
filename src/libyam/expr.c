@@ -64,9 +64,9 @@ const char *yam_tok_kv_adv(const char **input, size_t *len, const char *key,
   return subcmd_val;
 }
 
-int yam_tok_to_int(const char *tok, size_t len) {
+int64_t yam_tok_to_int(const char *tok, size_t len) {
   char *end = NULL;
-  int result = (int)strtol(tok, &end, 0);
+  int64_t result = strtol(tok, &end, 0);
 
   if (end != tok + len) {
     yam_err_fset(YAM_ERR_INT_CONVERSION, "Unable to convert '%.*s' to int!\n",
@@ -81,8 +81,8 @@ float yam_tok_to_float(const char *tok, size_t len) {
   float result = strtof(tok, &end);
 
   if (end != tok + len) {
-    yam_err_fset(YAM_ERR_FLOAT_CONVERSION, "Unable to convert '%.*s' to float!\n",
-                 (int)len, tok);
+    yam_err_fset(YAM_ERR_FLOAT_CONVERSION,
+                 "Unable to convert '%.*s' to float!\n", (int)len, tok);
   }
 
   return result;
