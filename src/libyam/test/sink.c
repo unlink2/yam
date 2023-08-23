@@ -66,6 +66,65 @@ void test_sink(void **state) {
     yam_sink_free(&s);
   }
   {
+    // byte
+    struct yam_sink s = yam_sink_from(&cfg, "endianess=big:fmt=d:sign=s:byte");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_BYTE, s.type);
+    assert_int_equal(YAM_FMT_SIGNED, s.int_sign);
+    assert_int_equal(YAM_FMT_DEC, s.int_fmt);
+
+    yam_sink_free(&s);
+  }
+  {
+    // short
+    struct yam_sink s = yam_sink_from(&cfg, "endianess=big:fmt=d:sign=s:short");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_SHORT, s.type);
+    assert_int_equal(YAM_ENDIANESS_BIG, s.int_endianess);
+    assert_int_equal(YAM_FMT_SIGNED, s.int_sign);
+
+    yam_sink_free(&s);
+  }
+  {
+    // int
+    struct yam_sink s = yam_sink_from(&cfg, "endianess=big:fmt=d:sign=s:int");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_INT, s.type);
+    assert_int_equal(YAM_ENDIANESS_BIG, s.int_endianess);
+    assert_int_equal(YAM_FMT_SIGNED, s.int_sign);
+
+    yam_sink_free(&s);
+  }
+  {
+    // int
+    struct yam_sink s = yam_sink_from(&cfg, "endianess=big:fmt=d:sign=s:long");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_LONG, s.type);
+    assert_int_equal(YAM_ENDIANESS_BIG, s.int_endianess);
+    assert_int_equal(YAM_FMT_SIGNED, s.int_sign);
+
+    yam_sink_free(&s);
+  }
+  {
+    // float
+    struct yam_sink s = yam_sink_from(&cfg, "endianess=big:float");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_FLOAT, s.type);
+    assert_int_equal(YAM_ENDIANESS_BIG, s.float_endianess);
+
+    yam_sink_free(&s);
+  }
+  {
+    // double
+    struct yam_sink s = yam_sink_from(&cfg, "endianess=big:double");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SINK_DOUBLE, s.type);
+    assert_int_equal(YAM_ENDIANESS_BIG, s.float_endianess);
+
+    yam_sink_free(&s);
+  }
+
+  {
     // default case
     struct yam_sink s = yam_sink_from(&cfg, "");
     assert_false(yam_err());
