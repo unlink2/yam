@@ -42,6 +42,62 @@ void test_source(void **state) {
     assert_string_equal("st String", s.sval);
   }
   {
+    // byte
+    struct yam_source s = yam_source_from(&cfg, "byte=0x12");
+    assert_false(yam_err());
+    assert_int_equal(YAM_BYTE, s.type);
+    assert_int_equal(0, s.from);
+    assert_int_equal(1, s.read);
+    assert_int_equal(0x12, s.byteval);
+  }
+  {
+    // short be
+    struct yam_source s = yam_source_from(&cfg, "endianess=big:short=0x1245");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SHORT, s.type);
+    assert_int_equal(0, s.from);
+    assert_int_equal(2, s.read);
+    assert_int_equal(0x4512, s.shortval);
+  }
+  {
+    // short le
+    struct yam_source s =
+        yam_source_from(&cfg, "endianess=little:short=0x1245");
+    assert_false(yam_err());
+    assert_int_equal(YAM_SHORT, s.type);
+    assert_int_equal(0, s.from);
+    assert_int_equal(2, s.read);
+    assert_int_equal(0x1245, s.shortval);
+  }
+  {
+    // int
+    struct yam_source s = yam_source_from(&cfg, "int=0x12456789");
+    assert_false(yam_err());
+    assert_int_equal(YAM_INT, s.type);
+    assert_int_equal(0, s.from);
+    assert_int_equal(4, s.read);
+    assert_int_equal(0x12456789, s.intval);
+  }
+  {
+    // long
+    struct yam_source s = yam_source_from(&cfg, "long=0x12456789AB");
+    assert_false(yam_err());
+    assert_int_equal(YAM_LONG, s.type);
+    assert_int_equal(0, s.from);
+    assert_int_equal(8, s.read);
+    assert_int_equal(0x12456789AB, s.longval);
+  }
+  {
+    // float
+    struct yam_source s = yam_source_from(&cfg, "float=3.1415");
+    assert_false(yam_err());
+    assert_int_equal(YAM_FLOAT, s.type);
+    assert_int_equal(0, s.from);
+    assert_int_equal(4, s.read);
+    assert_float_equal(3.1415, s.fval, 0.0001);
+  }
+
+  {
     // invalid kv pair
     yam_source_from(&cfg, "invalid=123");
     assert_int_equal(YAM_ERR_EXPR_SYNTAX, yam_err());

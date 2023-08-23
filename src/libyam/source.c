@@ -119,13 +119,13 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
 }
 
 struct yam_source yam_source_byte(int8_t ival) {
-  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+  struct yam_source self = yam_source_init(YAM_BYTE, 0, sizeof(ival));
   self.byteval = ival;
   return self;
 }
 
 struct yam_source yam_source_short(int16_t ival, enum yam_endianess endianess) {
-  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+  struct yam_source self = yam_source_init(YAM_SHORT, 0, sizeof(ival));
 
   if (endianess == YAM_ENDIANESS_LITTLE) {
     self.shortval = htole16(ival);
@@ -149,7 +149,7 @@ struct yam_source yam_source_int(int32_t ival, enum yam_endianess endianess) {
 }
 
 struct yam_source yam_source_long(int64_t ival, enum yam_endianess endianess) {
-  struct yam_source self = yam_source_init(YAM_INT, 0, sizeof(ival));
+  struct yam_source self = yam_source_init(YAM_LONG, 0, sizeof(ival));
 
   if (endianess == YAM_ENDIANESS_LITTLE) {
     self.longval = htole64(ival);
@@ -175,7 +175,7 @@ struct yam_source yam_source_float(float fval, enum yam_endianess endianess) {
 }
 
 struct yam_source yam_source_double(double fval, enum yam_endianess endianess) {
-  struct yam_source self = yam_source_init(YAM_FLOAT, 0, sizeof(fval));
+  struct yam_source self = yam_source_init(YAM_DOUBLE, 0, sizeof(fval));
   self.dval = fval;
 
   int64_t *pfval = (void *)&self.dval;
