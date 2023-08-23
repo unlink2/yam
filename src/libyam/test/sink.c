@@ -1,5 +1,6 @@
 #include "libyam/sink.h"
 #include "libyam/config.h"
+#include "libyam/data.h"
 #include "libyam/drain.h"
 #include "libyam/error.h"
 #include "libyam/test/test.h"
@@ -10,9 +11,9 @@
 void test_c_char_array_sink(void **state) {
   const size_t result_len = 512;
   char result[result_len];
-  memset(result, 0, result_len);
 
   {
+    memset(result, 0, result_len);
     // simple case
     FILE *f = tmpfile();
     struct yam_drain drain = yam_drain_file(f);
@@ -30,6 +31,31 @@ void test_c_char_array_sink(void **state) {
 
     assert_string_equal("const char test_array[] = { 0x61, 0x62, 0x63, };",
                         result);
+    assert_false(yam_err());
+
+    yam_sink_free(&sink);
+    yam_drain_free(&drain);
+
+    fclose(f);
+  }
+  {
+    memset(result, 0, result_len);
+    // int
+    FILE *f = tmpfile();
+    struct yam_drain drain = yam_drain_file(f);
+
+    struct yam_sink sink =
+        yam_sink_int(1, YAM_FMT_HEX, YAM_FMT_SIGNED, YAM_ENDIANESS_LITTLE);
+    const size_t data_len = 5;
+    const char data[] = {0x1b, 0x2d, 0x3f, 0x12, 0x11};
+    yam_sink_start(&sink, &drain);
+    yam_sink_convert(&sink, &drain, data, data_len);
+    yam_sink_end(&sink, &drain);
+
+    rewind(f);
+    fread(result, result_len, 1, f);
+
+    assert_string_equal("0x123f2d1b 0x1b ", result);
     assert_false(yam_err());
 
     yam_sink_free(&sink);

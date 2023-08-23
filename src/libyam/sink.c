@@ -218,7 +218,7 @@ size_t yam_sink_convert_fallback(struct yam_sink *self, struct yam_drain *drain,
                                  const char *data, size_t data_len,
                                  size_t actual_written) {
   data_len = data_len - actual_written;
-  if (data_len <= actual_written) {
+  if (data_len >= actual_written) {
     return 0;
   }
   yam_warn("%ld bytes were not converted! Using fallback output!\n", data_len);
