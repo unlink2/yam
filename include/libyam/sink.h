@@ -76,6 +76,9 @@ struct yam_sink yam_sink_long(size_t stride, enum yam_int_fmt fmt,
                               enum yam_int_sign sign,
                               enum yam_endianess endianess);
 
+struct yam_sink yam_sink_float(size_t stride, enum yam_endianess endianess);
+struct yam_sink yam_sink_double(size_t stride, enum yam_endianess endianess);
+
 struct yam_sink yam_sink_c_char_array(size_t stride, const char *var_name);
 
 // always called before conversion starts

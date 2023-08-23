@@ -95,6 +95,20 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
       break;
     }
 
+    subcmd_val =
+        yam_tok_kv_adv(&cmd, &len, YAM_SINK_FLOAT_STR, &subcmd_val_len);
+    if (subcmd_val) {
+      sink = yam_sink_float(1, endianess);
+      break;
+    }
+
+    subcmd_val =
+        yam_tok_kv_adv(&cmd, &len, YAM_SINK_DOUBLE_STR, &subcmd_val_len);
+    if (subcmd_val) {
+      sink = yam_sink_double(1, endianess);
+      break;
+    }
+
     if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
       yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Invalid assignment: '%.*s'\n",
                    (int)len, cmd);
@@ -152,6 +166,20 @@ struct yam_sink yam_sink_long(size_t stride, enum yam_int_fmt fmt,
   struct yam_sink self = yam_sink_init(YAM_SINK_LONG, stride);
   self.int_fmt = fmt;
   self.int_sign = sign;
+  self.int_endianess = endianess;
+
+  return self;
+}
+
+struct yam_sink yam_sink_float(size_t stride, enum yam_endianess endianess) {
+  struct yam_sink self = yam_sink_init(YAM_SINK_FLOAT, stride);
+  self.int_endianess = endianess;
+
+  return self;
+}
+
+struct yam_sink yam_sink_double(size_t stride, enum yam_endianess endianess) {
+  struct yam_sink self = yam_sink_init(YAM_SINK_DOUBLE, stride);
   self.int_endianess = endianess;
 
   return self;
@@ -381,6 +409,64 @@ size_t yam_sink_convert_long(struct yam_sink *self, struct yam_drain *drain,
   return written;
 }
 
+size_t yam_sink_convert_float(struct yam_sink *self, struct yam_drain *drain,
+                              const char *data, size_t data_len) {
+  size_t written = 0;
+
+  size_t full_len = data_len;
+  size_t stride = self->stride * sizeof(float);
+
+  data_len = data_len - data_len % sizeof(int32_t);
+
+  for (size_t i = 0; i < data_len; i += stride) {
+    float *d = (float *)(data + i);
+    int32_t *f = (void *)d;
+
+    if (self->int_endianess == YAM_ENDIANESS_LITTLE) {
+      *f = le32toh(*f);
+    } else {
+      *f = be32toh(*f);
+    }
+
+    written += yam_drain_fprintf(drain, "%f ", *d);
+  }
+
+  size_t actual_write = data_len;
+  written +=
+      yam_sink_convert_fallback(self, drain, data, full_len, actual_write);
+
+  return written;
+}
+
+size_t yam_sink_convert_double(struct yam_sink *self, struct yam_drain *drain,
+                               const char *data, size_t data_len) {
+  size_t written = 0;
+
+  size_t full_len = data_len;
+  size_t stride = self->stride * sizeof(double);
+
+  data_len = data_len - data_len % sizeof(int64_t);
+
+  for (size_t i = 0; i < data_len; i += stride) {
+    double *d = (double *)(data + i);
+    int64_t *f = (void *)d;
+
+    if (self->int_endianess == YAM_ENDIANESS_LITTLE) {
+      *f = le64toh(*f);
+    } else {
+      *f = be64toh(*f);
+    }
+
+    written += yam_drain_fprintf(drain, "%f ", *d);
+  }
+
+  size_t actual_write = data_len;
+  written +=
+      yam_sink_convert_fallback(self, drain, data, full_len, actual_write);
+
+  return written;
+}
+
 size_t yam_sink_convert(struct yam_sink *self, struct yam_drain *drain,
                         const char *data, size_t data_len) {
 
@@ -403,6 +489,12 @@ size_t yam_sink_convert(struct yam_sink *self, struct yam_drain *drain,
     break;
   case YAM_SINK_LONG:
     read = yam_sink_convert_long(self, drain, data, data_len);
+    break;
+  case YAM_SINK_FLOAT:
+    read = yam_sink_convert_float(self, drain, data, data_len);
+    break;
+  case YAM_SINK_DOUBLE:
+    read = yam_sink_convert_double(self, drain, data, data_len);
     break;
   default:
     break;
