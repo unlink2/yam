@@ -54,6 +54,7 @@
 
 .SH EXAMPLES
   yam example.bin
+  yam --sink=echo example.bin
   yam file=example.bin
   yam "str=example string"
   yam "from=1:read=2:str=example string"
@@ -61,6 +62,7 @@
   yam amount=100:step=1:pad=a
   yam endianess=big:int=0xABCD
   yam endianess=little:float=3.14
+  yam --sink="endianess=big:fmt=d:sign=s:int" endianess=big:int=0xABCD
 
 .SH SEE ALSO
 
