@@ -21,6 +21,13 @@
     Valid sinks:
     [name=[variable name]:]cchar
     echo
+    [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:byte
+    [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:short
+    [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:int
+    [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:long
+    [endianess=[little|big]]:float
+    [endianess=[little|big]]:double
+
   -o, --output=FILE         
     Select an output file
   -t, --total
