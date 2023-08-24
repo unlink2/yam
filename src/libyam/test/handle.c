@@ -48,4 +48,20 @@ void test_handle(void **state) {
 
     yam_teardown();
   }
+  {
+    yam_setup("read=3:step=1:pad=a", "echo");
+
+    assert_false(yam_err());
+    assert_string_equal("abc\n", result);
+
+    yam_teardown();
+  }
+  {
+    yam_setup("read=3:step=0:pad=a", "echo");
+
+    assert_false(yam_err());
+    assert_string_equal("aaa\n", result);
+
+    yam_teardown();
+  }
 }

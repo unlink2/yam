@@ -10,7 +10,9 @@
 #define YAM_PREFIX_FILE "file="
 #define YAM_PREFIX_STRING "str="
 #define YAM_PREFIX_HEX_STRING "hex="
-#define YAM_PREFIX_PADDING "pad="
+
+#define YAM_PREFIX_PAD "pad="
+#define YAM_PREFIX_PAD_STRIDE "step="
 
 #define YAM_PREFIX_BYTE "byte="
 #define YAM_PREFIX_SHORT "short="
@@ -29,7 +31,7 @@ enum yam_sources {
   YAM_FILE,
   YAM_STRING,
   YAM_HEX_STRING,
-  YAM_PADDING,
+  YAM_PAD,
 
   YAM_BYTE,
   YAM_SHORT,
@@ -48,7 +50,6 @@ struct yam_source {
     const char *sval;
     struct {
       int pad_char;
-      size_t pad_amount;
       int pad_stride;
     };
     int8_t byteval;
@@ -65,6 +66,8 @@ struct yam_source yam_source_init(enum yam_sources type, int from, int read);
 struct yam_source yam_source_from(struct yam_config *cfg, const char *expr);
 struct yam_source yam_source_file(FILE *f, int from, int read);
 struct yam_source yam_source_string(const char *sval, int from, int read);
+struct yam_source yam_source_pad(int pad_char, size_t pad_amount,
+                                 int pad_stride);
 
 struct yam_source yam_source_byte(int8_t ival);
 struct yam_source yam_source_short(int16_t ival, enum yam_endianess endianess);

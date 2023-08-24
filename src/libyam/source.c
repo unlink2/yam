@@ -36,6 +36,9 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
   int read = YAM_READ_TO_END;
   enum yam_endianess endianess = YAM_ENDIANESS_LITTLE;
 
+  int pad_char = ' ';
+  int pad_stride = 0;
+
   const char *subcmd_val = NULL;
   do {
     size_t subcmd_val_len = 0;
@@ -105,6 +108,22 @@ struct yam_source yam_source_from(struct yam_config *cfg, const char *expr) {
     if (subcmd_val) {
       return yam_source_double(yam_tok_to_float(subcmd_val, subcmd_val_len),
                                endianess);
+    }
+
+    // pad
+    subcmd_val =
+        yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_PAD_STRIDE, &subcmd_val_len);
+    if (subcmd_val) {
+      pad_stride = (int)yam_tok_to_int(subcmd_val, subcmd_val_len);
+      continue;
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_PREFIX_PAD, &subcmd_val_len);
+    if (subcmd_val && subcmd_val_len <= 1) {
+      if (subcmd_val_len == 1) {
+        pad_char = (int)subcmd_val[0];
+      }
+      return yam_source_pad(pad_char, read, pad_stride);
     }
 
     if (strncmp(YAM_STD_FILE, expr, strlen(YAM_STD_FILE)) != 0) {
@@ -225,6 +244,16 @@ struct yam_source yam_source_file(FILE *f, int from, int read) {
   return self;
 }
 
+struct yam_source yam_source_pad(int pad_char, size_t pad_amount,
+                                 int pad_stride) {
+  struct yam_source self = yam_source_init(YAM_PAD, 0, (int)pad_amount);
+
+  self.pad_char = pad_char;
+  self.pad_stride = pad_stride;
+
+  return self;
+}
+
 size_t yam_source_read_from_file(const struct yam_source *self, char *buffer,
                                  size_t buffer_len) {
   if (self->total_written > self->read) {
@@ -266,6 +295,20 @@ size_t yam_source_read_ptr(const struct yam_source *self, char *buffer,
   return read_amount;
 }
 
+size_t yam_source_read_pad(struct yam_source *self, char *buffer,
+                           size_t buffer_len) {
+  size_t left_to_pad = self->read - self->total_written;
+
+  size_t len = MIN(left_to_pad, buffer_len);
+
+  for (size_t i = 0; i < len; i++) {
+    buffer[i] = (char)self->pad_char;
+    self->pad_char += self->pad_stride;
+  }
+
+  return len;
+}
+
 size_t yam_source_read(struct yam_source *self, char *buffer,
                        size_t buffer_len) {
   size_t written = 0;
@@ -295,7 +338,9 @@ size_t yam_source_read(struct yam_source *self, char *buffer,
     written = yam_source_read_ptr(self, buffer, buffer_len, &self->dval);
     break;
   case YAM_HEX_STRING:
-  case YAM_PADDING:
+    break;
+  case YAM_PAD:
+    written = yam_source_read_pad(self, buffer, buffer_len);
     break;
   }
 
