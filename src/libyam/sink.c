@@ -248,6 +248,9 @@ size_t yam_sink_convert_byte(struct yam_sink *self, struct yam_drain *drain,
   case YAM_FMT_DEC:
     fmt = "%d ";
     break;
+  case YAM_FMT_CHAR:
+    fmt = "%c";
+    break;
   }
 
   if (self->int_sign == YAM_FMT_SIGNED) {
@@ -280,6 +283,8 @@ size_t yam_sink_convert_short(struct yam_sink *self, struct yam_drain *drain,
     break;
   case YAM_FMT_DEC:
     fmt = "%d ";
+    break;
+  default:
     break;
   }
 
@@ -330,6 +335,8 @@ size_t yam_sink_convert_int(struct yam_sink *self, struct yam_drain *drain,
   case YAM_FMT_DEC:
     fmt = "%d ";
     break;
+  default:
+    break;
   }
 
   size_t full_len = data_len;
@@ -378,6 +385,8 @@ size_t yam_sink_convert_long(struct yam_sink *self, struct yam_drain *drain,
     break;
   case YAM_FMT_DEC:
     fmt = "%ld ";
+    break;
+  default:
     break;
   }
 

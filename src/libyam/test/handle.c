@@ -64,4 +64,12 @@ void test_handle(void **state) {
 
     yam_teardown();
   }
+  {
+    yam_setup("byte=0x62", "fmt=c:byte");
+
+    assert_false(yam_err());
+    assert_string_equal("b\n", result);
+
+    yam_teardown();
+  }
 }

@@ -24,6 +24,8 @@ enum yam_int_fmt yam_int_fmt_from(const char *expr, size_t len) {
     return YAM_FMT_DEC;
   } else if (strncmp("b", expr, MAX(strlen("b"), len)) == 0) {
     return YAM_FMT_BIN;
+  } else if (strncmp("c", expr, MAX(strlen("c"), len)) == 0) {
+    return YAM_FMT_CHAR;
   }
 
   yam_err_fset(YAM_ERR_EXPR_SYNTAX, "Unable to convert '%.*s' to int fmt\n",
