@@ -21,7 +21,7 @@
     Valid sinks:
     [name=[variable name]:]cchar
     echo
-    [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:byte
+    [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o|c]]:byte
     [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:short
     [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:int
     [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:long
