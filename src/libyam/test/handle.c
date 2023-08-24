@@ -32,12 +32,19 @@
 
 // integration tests
 void test_handle(void **state) {
-
   {
     yam_setup("str=abc", "");
 
     assert_false(yam_err());
     assert_string_equal("const char var[] = { 0x61, 0x62, 0x63, };\n", result);
+
+    yam_teardown();
+  }
+  {
+    yam_setup("endianess=little:short=0x1234", "endianess=big:short");
+
+    assert_false(yam_err());
+    assert_string_equal("0x3412 \n", result);
 
     yam_teardown();
   }
