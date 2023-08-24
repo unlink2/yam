@@ -70,6 +70,7 @@ struct yam_handle yam_init(struct yam_config *cfg) {
 
   handle = yam_handle_init(sources, sources_len, sink, drain);
   handle.print_total_read = cfg->print_total_read;
+  handle.no_lf = cfg->no_lf;
 
   return handle;
 }

@@ -13,6 +13,7 @@ struct yam_handle {
   struct yam_drain drain;
 
   bool print_total_read;
+  bool no_lf;
 };
 
 struct yam_handle yam_handle_init(struct yam_source *sources,

@@ -13,6 +13,7 @@ struct yam_handle yam_handle_init(struct yam_source *sources,
   self.sources_len = sources_len;
   self.sink = sink;
   self.drain = drain;
+  self.no_lf = false;
   return self;
 }
 
@@ -43,9 +44,9 @@ void yam_handle_run(struct yam_handle *self) {
   }
 
   yam_sink_end(&self->sink, &self->drain);
-  yam_drain_fprintf(&self->drain, "\n");
-  if (yam_err()) {
-    return;
+
+  if (!self->no_lf) {
+    yam_drain_fprintf(&self->drain, "\n");
   }
 }
 

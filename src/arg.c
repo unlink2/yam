@@ -16,12 +16,13 @@ struct arg_str *sink = NULL;
 struct arg_str *drain = NULL;
 
 struct arg_lit *total_read = NULL;
+struct arg_lit *no_lf = NULL;
 
 // arg end stores errors
 struct arg_end *end = NULL;
 
 #define yam_argtable                                                           \
-  { help, version, verb, sink, drain, sources, total_read, end, }
+  { help, version, verb, sink, drain, sources, no_lf, total_read, end, }
 
 struct yam_config yam_args_to_config(int argc, char **argv) {
   help = arg_litn(NULL, "help", 0, 1, "display this help and exit");
@@ -30,6 +31,7 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   sink = arg_str0("s", "sink", "sink name", "Select which converter to use.");
   total_read = arg_lit0("t", "total", "Output total amount read to stdout");
   drain = arg_str0("o", "output", "FILE", "Select an output file");
+  no_lf = arg_lit0(NULL, "nolf", "Disable line feed at end of output");
   sources = arg_strn(NULL, NULL, "INPUT", 0, YAM_MAX_SOURCE,
                      "Provide an input source");
   end = arg_end(20);
@@ -94,6 +96,7 @@ struct yam_config yam_args_to_config(int argc, char **argv) {
   }
 
   cfg.print_total_read = total_read->count > 0;
+  cfg.no_lf = no_lf->count > 0;
 
   return cfg;
 exit:

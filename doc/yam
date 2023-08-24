@@ -14,6 +14,8 @@
     display this help and exit
   --version                 
     display version info and exit
+  --nolf
+    Disable line feed at end of output
   -v, --verbose             
     verbose output
   -s, --sink=[sink name]  

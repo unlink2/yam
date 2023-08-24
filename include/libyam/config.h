@@ -18,6 +18,8 @@ struct yam_config {
   const char *sink_expr;
   const char *drain_expr;
 
+  bool no_lf;
+
   bool print_total_read;
 };
 
