@@ -29,6 +29,9 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
   enum yam_int_sign int_sign = YAM_FMT_SIGNED;
   enum yam_int_fmt int_fmt = YAM_FMT_HEX;
 
+  char *pre = NULL;
+  char *post = NULL;
+
   do {
     size_t subcmd_val_len = 0;
     subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_SINK_VAR_NAME, &subcmd_val_len);
@@ -54,6 +57,18 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
     subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_SINK_FMT_INT, &subcmd_val_len);
     if (subcmd_val) {
       int_fmt = yam_int_fmt_from(subcmd_val, subcmd_val_len);
+      continue;
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_SINK_PRE, &subcmd_val_len);
+    if (subcmd_val) {
+      pre = strndup(subcmd_val, subcmd_val_len);
+      continue;
+    }
+
+    subcmd_val = yam_tok_kv_adv(&cmd, &len, YAM_SINK_POST, &subcmd_val_len);
+    if (subcmd_val) {
+      post = strndup(subcmd_val, subcmd_val_len);
       continue;
     }
 
@@ -115,6 +130,18 @@ struct yam_sink yam_sink_from(struct yam_config *cfg, const char *expr) {
       break;
     }
   } while (subcmd_val != NULL);
+
+  if (pre) {
+    // cleanup pre!
+    sink.flags |= YAM_SINK_FLAG_FREE_PRE;
+    sink.pre = pre;
+  }
+
+  if (post) {
+    // cleanup post!
+    sink.flags |= YAM_SINK_FLAG_FREE_POST;
+    sink.post = post;
+  }
 
   return sink;
 }
@@ -565,5 +592,13 @@ void yam_sink_free(struct yam_sink *self) {
     break;
   default:
     break;
+  }
+
+  if (self->flags & YAM_SINK_FLAG_FREE_PRE) {
+    free((void *)self->pre);
+  }
+
+  if (self->flags & YAM_SINK_FLAG_FREE_POST) {
+    free((void *)self->post);
   }
 }

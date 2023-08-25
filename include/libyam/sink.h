@@ -15,6 +15,9 @@
 #define YAM_SINK_FMT_INT "fmt="
 #define YAM_SINK_VAR_NAME "name="
 
+#define YAM_SINK_PRE "pre="
+#define YAM_SINK_POST "post="
+
 // allow specifying endianess with f32:le or f32:be
 #define YAM_SINK_FLOAT_STR "float"
 #define YAM_SINK_DOUBLE_STR "double"
@@ -48,11 +51,17 @@ enum yam_sinks {
   YAM_SINK_DOUBLE,
 };
 
+enum yam_sink_flags {
+  YAM_SINK_FLAG_FREE_PRE = 1,
+  YAM_SINK_FLAG_FREE_POST = 2,
+};
+
 struct yam_sink {
   enum yam_sinks type;
   size_t stride;
   const char *pre;
   const char *post;
+  enum yam_sink_flags flags;
   union {
     const char *var_name;
     struct {

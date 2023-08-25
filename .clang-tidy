@@ -21,7 +21,8 @@ Checks: "*,
   -altera-id-dependent-backward-branch,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -misc-no-recursion,
-  -concurrency-mt-unsafe
+  -concurrency-mt-unsafe,
+  -hicpp-signed-bitwise
 "
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
