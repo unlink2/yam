@@ -219,7 +219,7 @@ struct yam_sink yam_sink_int(size_t stride, enum yam_int_fmt fmt,
     break;
   case YAM_FMT_OCT:
     self.pre = YAM_OCT_PREFIX;
-    fmt_str = "%s%o%";
+    fmt_str = "%s%o%s";
     break;
   case YAM_FMT_DEC:
   default:
