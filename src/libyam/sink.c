@@ -127,7 +127,7 @@ struct yam_sink yam_sink_init(enum yam_sinks type, size_t stride) {
   self.stride = stride;
 
   self.pre = "";
-  self.post = ", ";
+  self.post = " ";
 
   return self;
 }
@@ -135,8 +135,34 @@ struct yam_sink yam_sink_init(enum yam_sinks type, size_t stride) {
 struct yam_sink yam_sink_byte(size_t stride, enum yam_int_fmt fmt,
                               enum yam_int_sign sign) {
   struct yam_sink self = yam_sink_init(YAM_SINK_BYTE, stride);
-  self.int_fmt = fmt;
   self.int_sign = sign;
+
+  char *fmt_str = NULL;
+  switch (fmt) {
+  case YAM_FMT_HEX:
+    self.pre = YAM_HEX_PREFIX;
+    fmt_str = "%s%x%s";
+    break;
+  case YAM_FMT_BIN:
+    self.pre = YAM_BIN_PREFIX;
+    fmt_str = "%s%b%s";
+    break;
+  case YAM_FMT_OCT:
+    self.pre = YAM_OCT_PREFIX;
+    fmt_str = "%s%o%s";
+    break;
+  case YAM_FMT_CHAR:
+    fmt_str = "%s%c%s";
+    self.post = "";
+    break;
+  case YAM_FMT_DEC:
+  default:
+    fmt_str = "%s%d%s";
+    break;
+  }
+
+  self.int_fmt = fmt;
+  self.int_fmt_str = fmt_str;
 
   return self;
 }
@@ -145,9 +171,31 @@ struct yam_sink yam_sink_short(size_t stride, enum yam_int_fmt fmt,
                                enum yam_int_sign sign,
                                enum yam_endianess endianess) {
   struct yam_sink self = yam_sink_init(YAM_SINK_SHORT, stride);
-  self.int_fmt = fmt;
   self.int_sign = sign;
   self.int_endianess = endianess;
+
+  const char *fmt_str = NULL;
+  switch (fmt) {
+  case YAM_FMT_HEX:
+    self.pre = YAM_HEX_PREFIX;
+    fmt_str = "%s%x%s";
+    break;
+  case YAM_FMT_BIN:
+    self.pre = YAM_BIN_PREFIX;
+    fmt_str = "%s%b%s";
+    break;
+  case YAM_FMT_OCT:
+    self.pre = YAM_OCT_PREFIX;
+    fmt_str = "%s%o%s";
+    break;
+  case YAM_FMT_DEC:
+  default:
+    fmt_str = "%s%d%s";
+    break;
+  }
+
+  self.int_fmt = fmt;
+  self.int_fmt_str = fmt_str;
 
   return self;
 }
@@ -156,9 +204,31 @@ struct yam_sink yam_sink_int(size_t stride, enum yam_int_fmt fmt,
                              enum yam_int_sign sign,
                              enum yam_endianess endianess) {
   struct yam_sink self = yam_sink_init(YAM_SINK_INT, stride);
-  self.int_fmt = fmt;
   self.int_sign = sign;
   self.int_endianess = endianess;
+
+  const char *fmt_str = NULL;
+  switch (fmt) {
+  case YAM_FMT_HEX:
+    self.pre = YAM_HEX_PREFIX;
+    fmt_str = "%s%x%s";
+    break;
+  case YAM_FMT_BIN:
+    self.pre = YAM_BIN_PREFIX;
+    fmt_str = "%s%b%s";
+    break;
+  case YAM_FMT_OCT:
+    self.pre = YAM_OCT_PREFIX;
+    fmt_str = "%s%o%";
+    break;
+  case YAM_FMT_DEC:
+  default:
+    fmt_str = "%s%d%s";
+    break;
+  }
+
+  self.int_fmt = fmt;
+  self.int_fmt_str = fmt_str;
 
   return self;
 }
@@ -167,9 +237,32 @@ struct yam_sink yam_sink_long(size_t stride, enum yam_int_fmt fmt,
                               enum yam_int_sign sign,
                               enum yam_endianess endianess) {
   struct yam_sink self = yam_sink_init(YAM_SINK_LONG, stride);
-  self.int_fmt = fmt;
   self.int_sign = sign;
   self.int_endianess = endianess;
+
+  const char *fmt_str = NULL;
+
+  switch (fmt) {
+  case YAM_FMT_HEX:
+    self.pre = YAM_HEX_PREFIX;
+    fmt_str = "%s%lx%s";
+    break;
+  case YAM_FMT_BIN:
+    self.pre = YAM_BIN_PREFIX;
+    fmt_str = "%s%lb%s";
+    break;
+  case YAM_FMT_OCT:
+    self.pre = YAM_OCT_PREFIX;
+    fmt_str = "%s%lo%s";
+    break;
+  case YAM_FMT_DEC:
+  default:
+    fmt_str = "%s%ld%s";
+    break;
+  }
+
+  self.int_fmt = fmt;
+  self.int_fmt_str = fmt_str;
 
   return self;
 }
@@ -240,33 +333,16 @@ size_t yam_sink_convert_fallback(struct yam_sink *self, struct yam_drain *drain,
 size_t yam_sink_convert_byte(struct yam_sink *self, struct yam_drain *drain,
                              const char *data, size_t data_len) {
   size_t written = 0;
-  const char *fmt = "%d ";
-
-  switch (self->int_fmt) {
-  case YAM_FMT_HEX:
-    fmt = "0x%x ";
-    break;
-  case YAM_FMT_BIN:
-    fmt = "0b%b ";
-    break;
-  case YAM_FMT_OCT:
-    fmt = "0%o ";
-    break;
-  case YAM_FMT_DEC:
-    fmt = "%d ";
-    break;
-  case YAM_FMT_CHAR:
-    fmt = "%c";
-    break;
-  }
 
   if (self->int_sign == YAM_FMT_SIGNED) {
     for (size_t i = 0; i < data_len; i += self->stride) {
-      written += yam_drain_fprintf(drain, fmt, (int8_t)data[i]);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (int8_t)data[i], self->post);
     }
   } else {
     for (size_t i = 0; i < data_len; i += self->stride) {
-      written += yam_drain_fprintf(drain, fmt, (uint8_t)data[i]);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (uint8_t)data[i], self->post);
     }
   }
 
@@ -276,24 +352,6 @@ size_t yam_sink_convert_byte(struct yam_sink *self, struct yam_drain *drain,
 size_t yam_sink_convert_short(struct yam_sink *self, struct yam_drain *drain,
                               const char *data, size_t data_len) {
   size_t written = 0;
-  const char *fmt = "%d ";
-
-  switch (self->int_fmt) {
-  case YAM_FMT_HEX:
-    fmt = "0x%x ";
-    break;
-  case YAM_FMT_BIN:
-    fmt = "0b%b ";
-    break;
-  case YAM_FMT_OCT:
-    fmt = "0%o ";
-    break;
-  case YAM_FMT_DEC:
-    fmt = "%d ";
-    break;
-  default:
-    break;
-  }
 
   size_t stride = self->stride * sizeof(int16_t);
 
@@ -311,9 +369,11 @@ size_t yam_sink_convert_short(struct yam_sink *self, struct yam_drain *drain,
     }
 
     if (self->int_sign == YAM_FMT_SIGNED) {
-      written += yam_drain_fprintf(drain, fmt, (int16_t)res);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (int16_t)res, self->post);
     } else {
-      written += yam_drain_fprintf(drain, fmt, (uint16_t)res);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (uint16_t)res, self->post);
     }
   }
 
@@ -327,24 +387,6 @@ size_t yam_sink_convert_short(struct yam_sink *self, struct yam_drain *drain,
 size_t yam_sink_convert_int(struct yam_sink *self, struct yam_drain *drain,
                             const char *data, size_t data_len) {
   size_t written = 0;
-  const char *fmt = "%d ";
-
-  switch (self->int_fmt) {
-  case YAM_FMT_HEX:
-    fmt = "0x%x ";
-    break;
-  case YAM_FMT_BIN:
-    fmt = "0b%b ";
-    break;
-  case YAM_FMT_OCT:
-    fmt = "0%o ";
-    break;
-  case YAM_FMT_DEC:
-    fmt = "%d ";
-    break;
-  default:
-    break;
-  }
 
   size_t full_len = data_len;
   size_t stride = self->stride * sizeof(int32_t);
@@ -362,9 +404,11 @@ size_t yam_sink_convert_int(struct yam_sink *self, struct yam_drain *drain,
     }
 
     if (self->int_sign == YAM_FMT_SIGNED) {
-      written += yam_drain_fprintf(drain, fmt, (int32_t)res);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (int32_t)res, self->post);
     } else {
-      written += yam_drain_fprintf(drain, fmt, (uint32_t)res);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (uint32_t)res, self->post);
     }
   }
 
@@ -378,24 +422,6 @@ size_t yam_sink_convert_int(struct yam_sink *self, struct yam_drain *drain,
 size_t yam_sink_convert_long(struct yam_sink *self, struct yam_drain *drain,
                              const char *data, size_t data_len) {
   size_t written = 0;
-  const char *fmt = "%ld ";
-
-  switch (self->int_fmt) {
-  case YAM_FMT_HEX:
-    fmt = "0x%lx ";
-    break;
-  case YAM_FMT_BIN:
-    fmt = "0b%lb ";
-    break;
-  case YAM_FMT_OCT:
-    fmt = "0%lo ";
-    break;
-  case YAM_FMT_DEC:
-    fmt = "%ld ";
-    break;
-  default:
-    break;
-  }
 
   size_t full_len = data_len;
   size_t stride = self->stride * sizeof(int64_t);
@@ -412,9 +438,11 @@ size_t yam_sink_convert_long(struct yam_sink *self, struct yam_drain *drain,
     }
 
     if (self->int_sign == YAM_FMT_SIGNED) {
-      written += yam_drain_fprintf(drain, fmt, (int64_t)res);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (int64_t)res, self->post);
     } else {
-      written += yam_drain_fprintf(drain, fmt, (uint64_t)res);
+      written += yam_drain_fprintf(drain, self->int_fmt_str, self->pre,
+                                   (uint64_t)res, self->post);
     }
   }
 
@@ -444,7 +472,7 @@ size_t yam_sink_convert_float(struct yam_sink *self, struct yam_drain *drain,
       *f = be32toh(*f);
     }
 
-    written += yam_drain_fprintf(drain, "%f ", *d);
+    written += yam_drain_fprintf(drain, "%s%f%s", self->pre, *d, self->post);
   }
 
   size_t actual_write = data_len;
@@ -473,7 +501,7 @@ size_t yam_sink_convert_double(struct yam_sink *self, struct yam_drain *drain,
       *f = be64toh(*f);
     }
 
-    written += yam_drain_fprintf(drain, "%f ", *d);
+    written += yam_drain_fprintf(drain, "%s%f%s", self->pre, *d, self->post);
   }
 
   size_t actual_write = data_len;

@@ -29,6 +29,10 @@
 
 #define YAM_SINK_STD_VAR_NAME "var"
 
+#define YAM_HEX_PREFIX "0x"
+#define YAM_BIN_PREFIX "0b"
+#define YAM_OCT_PREFIX "0"
+
 struct yam_config;
 
 enum yam_sinks {
@@ -53,8 +57,9 @@ struct yam_sink {
     const char *var_name;
     struct {
       enum yam_endianess int_endianess;
-      enum yam_int_fmt int_fmt;
+      const char *int_fmt_str;
       enum yam_int_sign int_sign;
+      enum yam_int_fmt int_fmt;
     };
     enum yam_endianess float_endianess;
   };
