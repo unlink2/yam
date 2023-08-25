@@ -29,6 +29,10 @@
     [endianess=[little|big]:sign=[s|u]:fmt=[d|x|b|o]]:long
     [endianess=[little|big]]:float
     [endianess=[little|big]]:double
+    
+    Universal sink variables:
+    pre=[prefix]
+    post=[postfox]
 
   -o, --output=FILE         
     Select an output file
