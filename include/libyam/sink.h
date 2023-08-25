@@ -47,6 +47,8 @@ enum yam_sinks {
 struct yam_sink {
   enum yam_sinks type;
   size_t stride;
+  const char *pre;
+  const char *post;
   union {
     const char *var_name;
     struct {

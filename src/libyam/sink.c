@@ -126,6 +126,9 @@ struct yam_sink yam_sink_init(enum yam_sinks type, size_t stride) {
   self.type = type;
   self.stride = stride;
 
+  self.pre = "";
+  self.post = ", ";
+
   return self;
 }
 
@@ -189,6 +192,9 @@ struct yam_sink yam_sink_c_char_array(size_t stride, const char *var_name) {
   struct yam_sink self = yam_sink_init(YAM_SINK_C_CHAR_ARRAY, stride);
   self.var_name = var_name;
 
+  self.pre = "0x";
+  self.post = ", ";
+
   return self;
 }
 
@@ -208,7 +214,8 @@ size_t yam_sink_convert_c_char_array(struct yam_sink *self,
                                      size_t data_len) {
   size_t written = 0;
   for (size_t i = 0; i < data_len; i += self->stride) {
-    written += yam_drain_fprintf(drain, "0x%02x, ", (uint8_t)data[i]);
+    written += yam_drain_fprintf(drain, "%s%02x%s", self->pre, (uint8_t)data[i],
+                                 self->post);
   }
 
   return written;
